@@ -680,7 +680,11 @@ static int frame_count = 0;
 	mainViewController = view_controller;
 
 	// prevent to stop music in another background app
-	[[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryAmbient error:nil];
+	if (GLOBAL_GET("audio/enable_audio_input")) {
+		[[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
+	} else {
+		[[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryAmbient error:nil];
+	}
 
 	return TRUE;
 };
