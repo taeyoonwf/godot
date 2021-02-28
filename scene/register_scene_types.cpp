@@ -755,7 +755,9 @@ void register_scene_types() {
 	}
 
 	// Always make the default theme to avoid invalid default font/icon/style in the given theme
-	// make_default_theme(default_theme_hidpi, font);
+	if (!OS::get_singleton()->get_cmdline_args().find("--generate-mono-glue")) {
+		make_default_theme(default_theme_hidpi, font);
+	}
 
 	if (theme_path != String()) {
 		Ref<Theme> theme = ResourceLoader::load(theme_path);

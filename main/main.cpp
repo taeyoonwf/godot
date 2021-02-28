@@ -1404,9 +1404,7 @@ Error Main::setup2(Thread::ID p_main_tid_override) {
 
 	MAIN_PRINT("Main: Load Scene Types");
 
-        // if (!OS::get_singleton()->get_cmdline_args().find("--generate-mono-glue")) {
-		register_scene_types();
-	// }
+	register_scene_types();
 
 	GLOBAL_DEF("display/mouse_cursor/custom_image", String());
 	GLOBAL_DEF("display/mouse_cursor/custom_image_hotspot", Vector2());
