@@ -653,7 +653,7 @@ void CSharpLanguage::pre_unsafe_unreference(Object *p_obj) {
 void CSharpLanguage::frame() {
 
 	if (gdmono && gdmono->is_runtime_initialized() && gdmono->get_core_api_assembly() != NULL) {
-		const Ref<MonoGCHandle> &task_scheduler_handle = GDMonoCache::cached_data.task_scheduler_handle;
+		const Ref<MonoGDHandle> &task_scheduler_handle = GDMonoCache::cached_data.task_scheduler_handle;
 
 		if (task_scheduler_handle.is_valid()) {
 			MonoObject *task_scheduler = task_scheduler_handle->get_target();
@@ -1201,7 +1201,7 @@ void CSharpLanguage::set_language_index(int p_idx) {
 	lang_idx = p_idx;
 }
 
-void CSharpLanguage::release_script_gchandle(Ref<MonoGCHandle> &p_gchandle) {
+void CSharpLanguage::release_script_gchandle(Ref<MonoGDHandle> &p_gchandle) {
 
 	if (!p_gchandle->is_released()) { // Do not lock unnecessarily
 		SCOPED_MUTEX_LOCK(get_singleton()->script_gchandle_release_mutex);
@@ -1209,9 +1209,9 @@ void CSharpLanguage::release_script_gchandle(Ref<MonoGCHandle> &p_gchandle) {
 	}
 }
 
-void CSharpLanguage::release_script_gchandle(MonoObject *p_expected_obj, Ref<MonoGCHandle> &p_gchandle) {
+void CSharpLanguage::release_script_gchandle(MonoObject *p_expected_obj, Ref<MonoGDHandle> &p_gchandle) {
 
-	uint32_t pinned_gchandle = MonoGCHandle::new_strong_handle_pinned(p_expected_obj); // We might lock after this, so pin it
+	uint32_t pinned_gchandle = MonoGDHandle::new_strong_handle_pinned(p_expected_obj); // We might lock after this, so pin it
 
 	if (!p_gchandle->is_released()) { // Do not lock unnecessarily
 		SCOPED_MUTEX_LOCK(get_singleton()->script_gchandle_release_mutex);
@@ -1227,7 +1227,7 @@ void CSharpLanguage::release_script_gchandle(MonoObject *p_expected_obj, Ref<Mon
 		}
 	}
 
-	MonoGCHandle::free_handle(pinned_gchandle);
+	MonoGDHandle::free_handle(pinned_gchandle);
 }
 
 CSharpLanguage::CSharpLanguage() {
@@ -1325,7 +1325,7 @@ bool CSharpLanguage::setup_csharp_script_binding(CSharpScriptBinding &r_script_b
 	r_script_binding.inited = true;
 	r_script_binding.type_name = type_name;
 	r_script_binding.wrapper_class = type_class; // cache
-	r_script_binding.gchandle = MonoGCHandle::create_strong(mono_object);
+	r_script_binding.gchandle = MonoGDHandle::create_strong(mono_object);
 	r_script_binding.owner = p_object;
 
 	// Tie managed to unmanaged
@@ -1413,7 +1413,7 @@ void CSharpLanguage::refcount_incremented_instance_binding(Object *p_object) {
 	CRASH_COND(!data);
 
 	CSharpScriptBinding &script_binding = ((Map<Object *, CSharpScriptBinding>::Element *)data)->get();
-	Ref<MonoGCHandle> &gchandle = script_binding.gchandle;
+	Ref<MonoGDHandle> &gchandle = script_binding.gchandle;
 
 	if (!script_binding.inited)
 		return;
@@ -1430,9 +1430,9 @@ void CSharpLanguage::refcount_incremented_instance_binding(Object *p_object) {
 			return; // Called after the managed side was collected, so nothing to do here
 
 		// Release the current weak handle and replace it with a strong handle.
-		uint32_t strong_gchandle = MonoGCHandle::new_strong_handle(target);
+		uint32_t strong_gchandle = MonoGDHandle::new_strong_handle(target);
 		gchandle->release();
-		gchandle->set_handle(strong_gchandle, MonoGCHandle::STRONG_HANDLE);
+		gchandle->set_handle(strong_gchandle, MonoGDHandle::STRONG_HANDLE);
 	}
 }
 
@@ -1449,7 +1449,7 @@ bool CSharpLanguage::refcount_decremented_instance_binding(Object *p_object) {
 	CRASH_COND(!data);
 
 	CSharpScriptBinding &script_binding = ((Map<Object *, CSharpScriptBinding>::Element *)data)->get();
-	Ref<MonoGCHandle> &gchandle = script_binding.gchandle;
+	Ref<MonoGDHandle> &gchandle = script_binding.gchandle;
 
 	int refcount = ref_owner->reference_get_count();
 
@@ -1467,9 +1467,9 @@ bool CSharpLanguage::refcount_decremented_instance_binding(Object *p_object) {
 			return refcount == 0; // Called after the managed side was collected, so nothing to do here
 
 		// Release the current strong handle and replace it with a weak handle.
-		uint32_t weak_gchandle = MonoGCHandle::new_weak_handle(target);
+		uint32_t weak_gchandle = MonoGDHandle::new_weak_handle(target);
 		gchandle->release();
-		gchandle->set_handle(weak_gchandle, MonoGCHandle::WEAK_HANDLE);
+		gchandle->set_handle(weak_gchandle, MonoGDHandle::WEAK_HANDLE);
 
 		return false;
 	}
@@ -1477,7 +1477,7 @@ bool CSharpLanguage::refcount_decremented_instance_binding(Object *p_object) {
 	return refcount == 0;
 }
 
-CSharpInstance *CSharpInstance::create_for_managed_type(Object *p_owner, CSharpScript *p_script, const Ref<MonoGCHandle> &p_gchandle) {
+CSharpInstance *CSharpInstance::create_for_managed_type(Object *p_owner, CSharpScript *p_script, const Ref<MonoGDHandle> &p_gchandle) {
 
 	CSharpInstance *instance = memnew(CSharpInstance);
 
@@ -1872,7 +1872,7 @@ MonoObject *CSharpInstance::_internal_new_managed() {
 	}
 
 	// Tie managed to unmanaged
-	gchandle = MonoGCHandle::create_strong(mono_object);
+	gchandle = MonoGDHandle::create_strong(mono_object);
 
 	if (base_ref)
 		_reference_owner_unsafe(); // Here, after assigning the gchandle (for the refcount_incremented callback)
@@ -1945,9 +1945,9 @@ void CSharpInstance::refcount_incremented() {
 		// so the owner must hold the managed side alive again to avoid it from being GCed.
 
 		// Release the current weak handle and replace it with a strong handle.
-		uint32_t strong_gchandle = MonoGCHandle::new_strong_handle(gchandle->get_target());
+		uint32_t strong_gchandle = MonoGDHandle::new_strong_handle(gchandle->get_target());
 		gchandle->release();
-		gchandle->set_handle(strong_gchandle, MonoGCHandle::STRONG_HANDLE);
+		gchandle->set_handle(strong_gchandle, MonoGDHandle::STRONG_HANDLE);
 	}
 }
 
@@ -1969,9 +1969,9 @@ bool CSharpInstance::refcount_decremented() {
 		// the managed instance takes responsibility of deleting the owner when GCed.
 
 		// Release the current strong handle and replace it with a weak handle.
-		uint32_t weak_gchandle = MonoGCHandle::new_weak_handle(gchandle->get_target());
+		uint32_t weak_gchandle = MonoGDHandle::new_weak_handle(gchandle->get_target());
 		gchandle->release();
-		gchandle->set_handle(weak_gchandle, MonoGCHandle::WEAK_HANDLE);
+		gchandle->set_handle(weak_gchandle, MonoGDHandle::WEAK_HANDLE);
 
 		return false;
 	}
@@ -2354,7 +2354,7 @@ bool CSharpScript::_update_exports() {
 				return false;
 			}
 
-			tmp_pinned_gchandle = MonoGCHandle::new_strong_handle_pinned(tmp_object); // pin it (not sure if needed)
+			tmp_pinned_gchandle = MonoGDHandle::new_strong_handle_pinned(tmp_object); // pin it (not sure if needed)
 
 			GDMonoMethod *ctor = script_class->get_method(CACHED_STRING_NAME(dotctor), 0);
 
@@ -2369,7 +2369,7 @@ bool CSharpScript::_update_exports() {
 			if (ctor_exc) {
 				// TODO: Should we free 'tmp_native' if the exception was thrown after its creation?
 
-				MonoGCHandle::free_handle(tmp_pinned_gchandle);
+				MonoGDHandle::free_handle(tmp_pinned_gchandle);
 				tmp_object = NULL;
 
 				ERR_PRINT("Exception thrown from constructor of temporary MonoObject:");
@@ -2465,7 +2465,7 @@ bool CSharpScript::_update_exports() {
 				GDMonoUtils::debug_print_unhandled_exception(exc);
 			}
 
-			MonoGCHandle::free_handle(tmp_pinned_gchandle);
+			MonoGDHandle::free_handle(tmp_pinned_gchandle);
 			tmp_object = NULL;
 
 			if (tmp_native && !base_ref) {
@@ -3023,7 +3023,7 @@ CSharpInstance *CSharpScript::_create_instance(const Variant **p_args, int p_arg
 	}
 
 	// Tie managed to unmanaged
-	instance->gchandle = MonoGCHandle::create_strong(mono_object);
+	instance->gchandle = MonoGDHandle::create_strong(mono_object);
 
 	if (instance->base_ref)
 		instance->_reference_owner_unsafe(); // Here, after assigning the gchandle (for the refcount_incremented callback)

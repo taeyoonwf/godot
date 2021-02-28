@@ -35,9 +35,9 @@
 
 #include "core/reference.h"
 
-class MonoGCHandle : public Reference {
+class MonoGDHandle : public Reference {
 
-	GDCLASS(MonoGCHandle, Reference);
+	GDCLASS(MonoGDHandle, Reference);
 
 	bool released;
 	bool weak;
@@ -54,8 +54,8 @@ public:
 	static uint32_t new_weak_handle(MonoObject *p_object);
 	static void free_handle(uint32_t p_gchandle);
 
-	static Ref<MonoGCHandle> create_strong(MonoObject *p_object);
-	static Ref<MonoGCHandle> create_weak(MonoObject *p_object);
+	static Ref<MonoGDHandle> create_strong(MonoObject *p_object);
+	static Ref<MonoGDHandle> create_weak(MonoObject *p_object);
 
 	_FORCE_INLINE_ bool is_released() { return released; }
 	_FORCE_INLINE_ bool is_weak() { return weak; }
@@ -69,8 +69,8 @@ public:
 	}
 	void release();
 
-	MonoGCHandle(uint32_t p_handle, HandleType p_handle_type);
-	~MonoGCHandle();
+	MonoGDHandle(uint32_t p_handle, HandleType p_handle_type);
+	~MonoGDHandle();
 };
 
 #endif // CSHARP_GC_HANDLE_H

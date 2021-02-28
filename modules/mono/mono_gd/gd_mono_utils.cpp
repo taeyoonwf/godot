@@ -85,7 +85,7 @@ MonoObject *unmanaged_get_managed(Object *unmanaged) {
 		}
 	}
 
-	Ref<MonoGCHandle> &gchandle = script_binding.gchandle;
+	Ref<MonoGDHandle> &gchandle = script_binding.gchandle;
 	ERR_FAIL_COND_V(gchandle.is_null(), NULL);
 
 	MonoObject *target = gchandle->get_target();
@@ -105,7 +105,7 @@ MonoObject *unmanaged_get_managed(Object *unmanaged) {
 	MonoObject *mono_object = GDMonoUtils::create_managed_for_godot_object(script_binding.wrapper_class, script_binding.type_name, unmanaged);
 	ERR_FAIL_NULL_V(mono_object, NULL);
 
-	gchandle->set_handle(MonoGCHandle::new_strong_handle(mono_object), MonoGCHandle::STRONG_HANDLE);
+	gchandle->set_handle(MonoGDHandle::new_strong_handle(mono_object), MonoGDHandle::STRONG_HANDLE);
 
 	// Tie managed to unmanaged
 	Reference *ref = Object::cast_to<Reference>(unmanaged);
