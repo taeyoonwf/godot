@@ -101,6 +101,7 @@ int OS_X11::get_current_video_driver() const {
 }
 
 Error OS_X11::initialize(const VideoMode &p_desired, int p_video_driver, int p_audio_driver) {
+
 	long im_event_mask = 0;
 	last_button_state = 0;
 
@@ -122,17 +123,17 @@ Error OS_X11::initialize(const VideoMode &p_desired, int p_video_driver, int p_a
 	}
 
 	/** XLIB INITIALIZATION **/
-	// x11_display = XOpenDisplay(NULL);
+	x11_display = XOpenDisplay(NULL);
 
-	//if (!x11_display) {
-	//	ERR_PRINT("X11 Display is not available");
-	//	return ERR_UNAVAILABLE;
-	//}
+	if (!x11_display) {
+		ERR_PRINT("X11 Display is not available");
+		return ERR_UNAVAILABLE;
+	}
 
 	char *modifiers = NULL;
 	Bool xkb_dar = False;
-	// XAutoRepeatOn(x11_display);
-	// xkb_dar = XkbSetDetectableAutoRepeat(x11_display, True, NULL);
+	XAutoRepeatOn(x11_display);
+	xkb_dar = XkbSetDetectableAutoRepeat(x11_display, True, NULL);
 
 	// Try to support IME if detectable auto-repeat is supported
 	if (xkb_dar == True) {
@@ -158,13 +159,13 @@ Error OS_X11::initialize(const VideoMode &p_desired, int p_video_driver, int p_a
 	int xrandr_major = 0;
 	int xrandr_minor = 0;
 	int event_base, error_base;
-	// xrandr_ext_ok = XRRQueryExtension(x11_display, &event_base, &error_base);
+	xrandr_ext_ok = XRRQueryExtension(x11_display, &event_base, &error_base);
 	xrandr_handle = dlopen("libXrandr.so.2", RTLD_LAZY);
 	if (!xrandr_handle) {
 		err = dlerror();
 		fprintf(stderr, "could not load libXrandr.so.2, Error: %s\n", err);
 	} else {
-		// XRRQueryVersion(x11_display, &xrandr_major, &xrandr_minor);
+		XRRQueryVersion(x11_display, &xrandr_major, &xrandr_minor);
 		if (((xrandr_major << 8) | xrandr_minor) >= 0x0105) {
 			xrr_get_monitors = (xrr_get_monitors_t)dlsym(xrandr_handle, "XRRGetMonitors");
 			if (!xrr_get_monitors) {
@@ -188,7 +189,7 @@ Error OS_X11::initialize(const VideoMode &p_desired, int p_video_driver, int p_a
 		return ERR_UNAVAILABLE;
 	}
 
-	// xim = XOpenIM(x11_display, NULL, NULL, NULL);
+	xim = XOpenIM(x11_display, NULL, NULL, NULL);
 
 	if (xim == NULL) {
 		WARN_PRINT("XOpenIM failed");
