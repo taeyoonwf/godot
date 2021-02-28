@@ -1260,9 +1260,11 @@ Error Main::setup2(Thread::ID p_main_tid_override) {
 		Thread::_main_thread_id = p_main_tid_override;
 	}
 
-	Error err = OS::get_singleton()->initialize(video_mode, video_driver_idx, audio_driver_idx);
-	if (err != OK) {
-		return err;
+        if (!OS::get_singleton()->get_cmdline_args().find("--generate-mono-glue")) {
+		Error err = OS::get_singleton()->initialize(video_mode, video_driver_idx, audio_driver_idx);
+		if (err != OK) {
+			return err;
+		}
 	}
 
 	print_line(" "); //add a blank line for readability
