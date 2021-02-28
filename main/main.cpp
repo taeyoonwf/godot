@@ -1252,6 +1252,28 @@ error:
 }
 
 Error Main::setup2(Thread::ID p_main_tid_override) {
+        /* if (OS::get_singleton()->get_cmdline_args().find("--generate-mono-glue")) {
+		arvr_server = memnew(ARVRServer);
+	register_core_singletons();
+	register_server_types();
+	register_scene_types();
+	ClassDB::set_current_api(ClassDB::API_EDITOR);
+	EditorNode::register_editor_types();
+
+	ClassDB::set_current_api(ClassDB::API_CORE);
+
+	register_platform_apis();
+	register_module_types();
+
+	camera_server = CameraServer::create();
+
+	initialize_physics();
+	register_server_singletons();
+
+	register_driver_types();
+
+		ScriptServer::init_languages();
+	} */
 
 	// Print engine name and version
 	print_line(String(VERSION_NAME) + " v" + get_full_version_string() + " - " + String(VERSION_WEBSITE));
@@ -1274,13 +1296,17 @@ Error Main::setup2(Thread::ID p_main_tid_override) {
 	// right moment to create and initialize the audio server
 
 	audio_server = memnew(AudioServer);
-	audio_server->init();
+        if (!OS::get_singleton()->get_cmdline_args().find("--generate-mono-glue")) {
+		audio_server->init();
+	}
 
 	// also init our arvr_server from here
 	arvr_server = memnew(ARVRServer);
 
 	// and finally setup this property under visual_server
-	VisualServer::get_singleton()->set_render_loop_enabled(!disable_render_loop);
+        if (!OS::get_singleton()->get_cmdline_args().find("--generate-mono-glue")) {
+		VisualServer::get_singleton()->set_render_loop_enabled(!disable_render_loop);
+	}
 
 	register_core_singletons();
 
@@ -1315,7 +1341,9 @@ Error Main::setup2(Thread::ID p_main_tid_override) {
 	MAIN_PRINT("Main: Load Remaps");
 
 	Color clear = GLOBAL_DEF("rendering/environment/default_clear_color", Color(0.3, 0.3, 0.3));
-	VisualServer::get_singleton()->set_default_clear_color(clear);
+        if (!OS::get_singleton()->get_cmdline_args().find("--generate-mono-glue")) {
+		VisualServer::get_singleton()->set_default_clear_color(clear);
+	}
 
 	if (show_logo) { //boot logo!
 		String boot_logo_path = GLOBAL_DEF("application/boot_splash/image", String());
@@ -1348,21 +1376,27 @@ Error Main::setup2(Thread::ID p_main_tid_override) {
 			Ref<Image> splash = memnew(Image(boot_splash_png));
 #endif
 
-			MAIN_PRINT("Main: ClearColor");
-			VisualServer::get_singleton()->set_default_clear_color(boot_bg_color);
-			MAIN_PRINT("Main: Image");
-			VisualServer::get_singleton()->set_boot_image(splash, boot_bg_color, false);
+        		if (!OS::get_singleton()->get_cmdline_args().find("--generate-mono-glue")) {
+				MAIN_PRINT("Main: ClearColor");
+				VisualServer::get_singleton()->set_default_clear_color(boot_bg_color);
+				MAIN_PRINT("Main: Image");
+				VisualServer::get_singleton()->set_boot_image(splash, boot_bg_color, false);
+			}
 #endif
 		}
 
 #ifdef TOOLS_ENABLED
 		Ref<Image> icon = memnew(Image(app_icon_png));
-		OS::get_singleton()->set_icon(icon);
+        	if (!OS::get_singleton()->get_cmdline_args().find("--generate-mono-glue")) {
+			OS::get_singleton()->set_icon(icon);
+		}
 #endif
 	}
 
 	MAIN_PRINT("Main: DCC");
-	VisualServer::get_singleton()->set_default_clear_color(GLOBAL_DEF("rendering/environment/default_clear_color", Color(0.3, 0.3, 0.3)));
+        if (!OS::get_singleton()->get_cmdline_args().find("--generate-mono-glue")) {
+		VisualServer::get_singleton()->set_default_clear_color(GLOBAL_DEF("rendering/environment/default_clear_color", Color(0.3, 0.3, 0.3)));
+	}
 	MAIN_PRINT("Main: END");
 
 	GLOBAL_DEF("application/config/icon", String());
@@ -1390,7 +1424,9 @@ Error Main::setup2(Thread::ID p_main_tid_override) {
 
 	MAIN_PRINT("Main: Load Scene Types");
 
-	register_scene_types();
+        // if (!OS::get_singleton()->get_cmdline_args().find("--generate-mono-glue")) {
+		register_scene_types();
+	// }
 
 	GLOBAL_DEF("display/mouse_cursor/custom_image", String());
 	GLOBAL_DEF("display/mouse_cursor/custom_image_hotspot", Vector2());

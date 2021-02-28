@@ -300,9 +300,10 @@ void DocData::generate(bool p_basic_types) {
 					default_value_valid = true;
 				}
 			} else {
-				default_value = get_documentation_default_value(name, E->get().name, default_value_valid);
+				default_value = 0;
+				// default_value = get_documentation_default_value(name, E->get().name, default_value_valid);
 
-				if (inherited) {
+				if (false && inherited) {
 					bool base_default_value_valid = false;
 					Variant base_default_value = get_documentation_default_value(ClassDB::get_parent_class(name), E->get().name, base_default_value_valid);
 					if (!default_value_valid || !base_default_value_valid || default_value == base_default_value)
@@ -460,7 +461,7 @@ void DocData::generate(bool p_basic_types) {
 
 		//theme stuff
 
-		{
+		if (false) {
 			List<StringName> l;
 			Theme::get_default()->get_constant_list(cname, &l);
 			for (List<StringName>::Element *E = l.front(); E; E = E->next()) {
