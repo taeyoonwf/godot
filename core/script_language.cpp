@@ -173,7 +173,6 @@ void ScriptServer::init_languages() {
 		}
 	}
 
-	print_line("_language_count : " + itos(_language_count));
 	for (int i = 0; i < _language_count; i++) {
 		_languages[i]->init();
 	}

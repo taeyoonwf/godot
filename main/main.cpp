@@ -1252,28 +1252,6 @@ error:
 }
 
 Error Main::setup2(Thread::ID p_main_tid_override) {
-        /* if (OS::get_singleton()->get_cmdline_args().find("--generate-mono-glue")) {
-		arvr_server = memnew(ARVRServer);
-	register_core_singletons();
-	register_server_types();
-	register_scene_types();
-	ClassDB::set_current_api(ClassDB::API_EDITOR);
-	EditorNode::register_editor_types();
-
-	ClassDB::set_current_api(ClassDB::API_CORE);
-
-	register_platform_apis();
-	register_module_types();
-
-	camera_server = CameraServer::create();
-
-	initialize_physics();
-	register_server_singletons();
-
-	register_driver_types();
-
-		ScriptServer::init_languages();
-	} */
 
 	// Print engine name and version
 	print_line(String(VERSION_NAME) + " v" + get_full_version_string() + " - " + String(VERSION_WEBSITE));

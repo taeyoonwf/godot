@@ -103,11 +103,7 @@ Error CSharpLanguage::execute_file(const String &p_path) {
 	return OK;
 }
 
-#include <cassert>
-
 void CSharpLanguage::init() {
-	print_line("CSharpLanguage::init");
-	// assert(false);
 
 #ifdef DEBUG_METHODS_ENABLED
 	if (OS::get_singleton()->get_cmdline_args().find("--class-db-json")) {

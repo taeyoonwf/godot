@@ -701,7 +701,6 @@ void Theme::get_constant_list(StringName p_type, List<StringName> *p_list) const
 
 	ERR_FAIL_NULL(p_list);
 
-	print_line(p_type);
 	if (!constant_map.has(p_type))
 		return;
 
