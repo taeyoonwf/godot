@@ -61,6 +61,7 @@ RUN git checkout main
 RUN scons p=x11 tools=yes module_mono_enabled=yes mono_glue=no -j8 mono_prefix=/root/mono-installs/desktop-linux-x86_64-release
 RUN ./bin/godot.x11.tools.64.mono --generate-mono-glue modules/mono/glue
 RUN scons p=x11 tools=yes module_mono_enabled=yes target=release_debug -j8 mono_prefix=/root/mono-installs/desktop-linux-x86_64-release
+RUN rm ./bin/godot.x11.tools.64.mono
 RUN mkdir /root/build
 RUN cp -r bin /root/build/
 
