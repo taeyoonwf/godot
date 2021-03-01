@@ -56,7 +56,7 @@ RUN rm -rf /root/mono-configs
 WORKDIR /root
 RUN git clone https://github.com/taeyoonwf/godot
 WORKDIR /root/godot
-RUN git checkout 3.2
+RUN git checkout main
 
 RUN scons p=x11 tools=yes module_mono_enabled=yes mono_glue=no -j8 mono_prefix=/root/mono-installs/desktop-linux-x86_64-release
 RUN ./bin/godot.x11.tools.64.mono --generate-mono-glue modules/mono/glue
