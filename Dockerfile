@@ -67,7 +67,7 @@ RUN cp -r bin /root/build/
 RUN scons p=android target=release_debug android_arch=arm64v8 module_mono_enabled=yes -j8 mono_prefix=/root/mono-installs/android-arm64-v8a-release 
 RUN scons p=android target=release_debug android_arch=armv7 module_mono_enabled=yes -j8 mono_prefix=/root/mono-installs/android-armeabi-v7a-release 
 WORKDIR /root/godot/platform/android/java
-RUN ./gradlew generateGodotTemplates
+RUN ./gradlew generateGodotTemplates && rm -rf /root/android-toolchains
 
 WORKDIR /root/godot
 RUN mkdir -p /root/build/templates/3.2.3.rc.mono
