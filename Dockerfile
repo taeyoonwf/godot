@@ -6,12 +6,12 @@ RUN apt update
 RUN apt install -yy git python3 python3-pip curl android-sdk wget
 WORKDIR /root
 
-RUN wget https://dl.google.com/android/repository/android-ndk-r21e-linux-x86_64.zip --quiet
-RUN wget https://dl.google.com/android/repository/commandlinetools-linux-6858069_latest.zip --quiet
-RUN unzip -qq android-ndk-r21e-linux-x86_64.zip
-RUN unzip -qq commandlinetools-linux-6858069_latest.zip
-RUN rm -rf android-ndk-r21e-linux-x86_64.zip
-RUN rm -rf commandlinetools-linux-6858069_latest.zip
+RUN wget https://dl.google.com/android/repository/android-ndk-r21e-linux-x86_64.zip --quiet &&
+    unzip -qq android-ndk-r21e-linux-x86_64.zip &&
+    rm -rf android-ndk-r21e-linux-x86_64.zip
+RUN wget https://dl.google.com/android/repository/commandlinetools-linux-6858069_latest.zip --quiet &&
+    unzip -qq commandlinetools-linux-6858069_latest.zip &&
+    rm -rf commandlinetools-linux-6858069_latest.zip
 RUN yes | ./cmdline-tools/bin/sdkmanager --install "cmake;3.10.2.4988404" --sdk_root=/usr/lib/android-sdk
 RUN ln -s /usr/lib/android-sdk/cmake/3.10.2.4988404/bin/cmake /usr/bin/cmake
 
@@ -25,10 +25,10 @@ RUN apt update
 RUN apt install -yy libx11-dev libxcursor-dev libxinerama-dev libxrandr-dev libxi-dev libsdl2-dev
 RUN pip3 install scons dataclasses
 
-RUN wget https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
-RUN dpkg -i packages-microsoft-prod.deb
+RUN wget https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb &&
+    dpkg -i packages-microsoft-prod.deb &&
+    rm -rf packages-microsoft-prod.deb
 RUN apt update && apt install -yy dotnet-sdk-5.0 pkg-config
-RUN rm -rf packages-microsoft-prod.deb
 
 RUN git clone https://github.com/godotengine/godot-mono-builds.git
 RUN git clone https://github.com/mono/mono
