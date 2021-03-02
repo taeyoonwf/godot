@@ -46,6 +46,7 @@ void AudioEffectRecordInstance::process(const AudioFrame *p_src_frames, AudioFra
 		rb_buf[ring_buffer_pos & ring_buffer_mask] = src[i];
 		ring_buffer_pos++;
 	}
+	print_verbose("ring_buffer_pos : " + itos(ring_buffer_pos));
 }
 
 void AudioEffectRecordInstance::_update_buffer() {
@@ -87,6 +88,8 @@ void AudioEffectRecordInstance::_io_thread_process() {
 
 void AudioEffectRecordInstance::_io_store_buffer() {
 	int to_read = ring_buffer_pos - ring_buffer_read_pos;
+	print_verbose("ring_buffer_read_pos : " + itos(ring_buffer_read_pos));
+	print_verbose("to_read : " + itos(to_read));
 
 	AudioFrame *rb_buf = ring_buffer.ptrw();
 
