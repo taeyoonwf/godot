@@ -280,7 +280,7 @@ Error AudioDriverOpenSL::capture_init_device() {
 
 	const int rec_buffer_frames = 2048;
 	rec_buffer.resize(rec_buffer_frames);
-	input_buffer_init(rec_buffer_frames);
+	input_buffer_init(rec_buffer_frames * 2);
 
 	res = (*recordBufferQueueItf)->Enqueue(recordBufferQueueItf, rec_buffer.ptrw(), rec_buffer.size() * sizeof(int16_t));
 	ERR_FAIL_COND_V(res != SL_RESULT_SUCCESS, ERR_CANT_OPEN);
