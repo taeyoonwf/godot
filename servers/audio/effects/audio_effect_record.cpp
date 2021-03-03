@@ -29,6 +29,8 @@
 /*************************************************************************/
 
 #include "audio_effect_record.h"
+#include <cassert>
+#include <cmath>
 
 void AudioEffectRecordInstance::process(const AudioFrame *p_src_frames, AudioFrame *p_dst_frames, int p_frame_count) {
 	if (!is_recording) {
@@ -38,14 +40,24 @@ void AudioEffectRecordInstance::process(const AudioFrame *p_src_frames, AudioFra
 		return;
 	}
 
+	int hash = 0;
 	//Add incoming audio frames to the IO ring buffer
 	const AudioFrame *src = p_src_frames;
 	AudioFrame *rb_buf = ring_buffer.ptrw();
 	for (int i = 0; i < p_frame_count; i++) {
-		p_dst_frames[i] = p_src_frames[i];
-		rb_buf[ring_buffer_pos & ring_buffer_mask] = src[i];
-		ring_buffer_pos++;
+		p_dst_frames[i].l = p_src_frames[i].l;
+		p_dst_frames[i].r = p_src_frames[i].r;
+		rb_buf[(ring_buffer_pos + i) & ring_buffer_mask].l = src[i].l;
+		rb_buf[(ring_buffer_pos + i) & ring_buffer_mask].r = src[i].r;
+		// if (i < 10)
+		// 	print_line(itos(i) + " : " + itos(*((int*)&src[i].l)) + " " + itos(*((int*)&src[i].r)));
+		hash = (hash * 31) + (*((int*)&src[i].l));
+		hash = (hash * 31) + (*((int*)&src[i].r));
 	}
+	hash = hash & ((1 << 30) - 1);
+	ring_buffer_pos += p_frame_count;
+	print_line("process hash : " + itos(hash));
+	// print_line("ring_buffer_pos : " + itos(ring_buffer_pos));
 }
 
 void AudioEffectRecordInstance::_update_buffer() {
@@ -87,9 +99,13 @@ void AudioEffectRecordInstance::_io_thread_process() {
 
 void AudioEffectRecordInstance::_io_store_buffer() {
 	int to_read = ring_buffer_pos - ring_buffer_read_pos;
+	// print_line("ring_buffer_read_pos : " + itos(ring_buffer_read_pos));
+	// print_line("to_read : " + itos(to_read));
+	// print_line("recording_data.size() : " + itos((int)recording_data.size()));
 
 	AudioFrame *rb_buf = ring_buffer.ptrw();
 
+	int sz = to_read;
 	while (to_read) {
 		AudioFrame buffered_frame = rb_buf[ring_buffer_read_pos & ring_buffer_mask];
 		recording_data.push_back(buffered_frame.l);
@@ -98,6 +114,13 @@ void AudioEffectRecordInstance::_io_store_buffer() {
 		ring_buffer_read_pos++;
 		to_read--;
 	}
+
+	int hash = 0;
+	for (int i = (int)recording_data.size() - sz * 2; i < (int)recording_data.size(); i++) {
+		hash = (hash * 31) + (*((int*)&recording_data[i]));
+	}
+	hash = hash & ((1 << 30) - 1);
+	print_line("io_store_buf hash : " + itos(hash));
 }
 
 void AudioEffectRecordInstance::_thread_callback(void *_instance) {
