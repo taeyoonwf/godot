@@ -671,6 +671,8 @@ Error AudioDriverPulseAudio::capture_init_device() {
 			break;
 	}
 
+	print_verbose("PulseAudio: detected " + itos(pa_rec_map.channels) + " input channels");
+
 	pa_sample_spec spec;
 
 	spec.format = PA_SAMPLE_S16LE;
@@ -700,8 +702,7 @@ Error AudioDriverPulseAudio::capture_init_device() {
 
 	input_buffer_init(input_buffer_frames);
 
-	print_verbose("PulseAudio: detected " + itos(pa_rec_map.channels) + " input channels");
-	print_verbose("PulseAudio: input buffer frames: " + itos(input_buffer_frames) + " calculated latency: " + itos(input_buffer_frames * 1000 / mix_rate) + "ms");
+	// print_verbose("PulseAudio: input buffer frames: " + itos(input_buffer_frames) + " calculated latency: " + itos(input_buffer_frames * 1000 / mix_rate) + "ms");
 
 	return OK;
 }
