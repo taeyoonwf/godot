@@ -811,6 +811,7 @@ AudioDriverPulseAudio::AudioDriverPulseAudio() :
 		default_device(""),
 		mix_rate(0),
 		buffer_frames(0),
+		input_buffer_frames(0),
 		pa_buffer_size(0),
 		channels(0),
 		pa_ready(0),
