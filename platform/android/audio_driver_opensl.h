@@ -90,6 +90,8 @@ class AudioDriverOpenSL : public AudioDriver {
 
 	virtual Error capture_init_device();
 
+	void pause_record();
+	void resume_record();
 public:
 	void set_singleton();
 

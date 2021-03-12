@@ -344,6 +344,24 @@ void AudioDriverOpenSL::finish() {
 	(*sl)->Destroy(sl);
 }
 
+void AudioDriverOpenSL::pause_record() {
+	if (!recorder)
+		return;
+
+	capture_stop();
+	(*recorder)->Destroy(recorder);
+	recorder = NULL;
+	recordItf = NULL;
+	recordBufferQueueItf = NULL;
+}
+
+void AudioDriverOpenSL::resume_record() {
+	if (recorder)
+		return;
+
+	capture_start();
+}
+
 void AudioDriverOpenSL::set_pause(bool p_pause) {
 
 	pause = p_pause;
@@ -351,8 +369,10 @@ void AudioDriverOpenSL::set_pause(bool p_pause) {
 	if (active) {
 		if (pause) {
 			(*playItf)->SetPlayState(playItf, SL_PLAYSTATE_PAUSED);
+			pause_record();
 		} else {
 			(*playItf)->SetPlayState(playItf, SL_PLAYSTATE_PLAYING);
+			resume_record();
 		}
 	}
 }
