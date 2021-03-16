@@ -17,4 +17,4 @@ cp bin/android_* /root/build/templates/3.2.3.rc.mono/
 cp -r /root/mono-installs/android-bcl /root/build/templates/3.2.3.rc.mono/bcl
 cp -r /root/mono-installs/desktop-bcl/* /root/build/templates/3.2.3.rc.mono/bcl/
 
-cp -r ../build /godot-fix/
+cp -r ../build/* /build/

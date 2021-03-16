@@ -441,9 +441,6 @@ private:
 
 	void _generate_context_menu();
 
-	int get_visible_rows() const;
-	int get_total_visible_rows() const;
-
 	int _get_minimap_visible_rows() const;
 
 	void update_cursor_wrap_offset();
@@ -586,6 +583,9 @@ public:
 	void end_complex_operation();
 
 	bool is_insert_text_operation();
+
+	int get_visible_rows() const;
+	int get_total_visible_rows() const;
 
 	void set_text(String p_text);
 	void insert_text_at_cursor(const String &p_text);
