@@ -1758,10 +1758,9 @@ void TextEdit::_notification(int p_what) {
 			}
 		} break;
 		case NOTIFICATION_INTERNAL_PROCESS: {
-			if (delayed_focus_out && delay_focus_exit && !has_focus()) {
+			if (delayed_focus_out && delayed_focus_exit && !has_focus())
 				focus_exit();
-			}
-			delay_focus_exit = false;
+			delayed_focus_exit = false;
 		}
 	}
 }
@@ -7167,6 +7166,7 @@ void TextEdit::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_minimap_width"), &TextEdit::get_minimap_width);
 
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "text", PROPERTY_HINT_MULTILINE_TEXT), "set_text", "get_text");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "delayed_focus_out"), "set_delayed_focus_out", "is_delayed_focus_out");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "readonly"), "set_readonly", "is_readonly");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "highlight_current_line"), "set_highlight_current_line", "is_highlight_current_line_enabled");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "syntax_highlighting"), "set_syntax_coloring", "is_syntax_coloring_enabled");
