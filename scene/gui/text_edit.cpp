@@ -1741,11 +1741,11 @@ void TextEdit::_notification(int p_what) {
 
 			if (OS::get_singleton()->has_virtual_keyboard() && virtual_keyboard_enabled)
 				OS::get_singleton()->show_virtual_keyboard(get_text(), get_global_rect(), true);
-			delayed_focus_exit = false;
+			delayed_focus_exit = 0;
 		} break;
 		case NOTIFICATION_FOCUS_EXIT: {
 			if (delayed_focus_out)
-				delayed_focus_exit = true;
+				delayed_focus_exit = 2;
 			else
 				focus_exit();
 		} break;
@@ -1758,9 +1758,9 @@ void TextEdit::_notification(int p_what) {
 			}
 		} break;
 		case NOTIFICATION_INTERNAL_PROCESS: {
-			if (delayed_focus_out && delayed_focus_exit && !has_focus())
+			if (delayed_focus_out && delayed_focus_exit == 1 && !has_focus())
 				focus_exit();
-			delayed_focus_exit = false;
+			delayed_focus_exit = MAX(0, delayed_focus_exit - 1);
 		}
 	}
 }
@@ -7358,7 +7358,7 @@ TextEdit::TextEdit() {
 	executing_line = -1;
 
 	delayed_focus_out = false;
-	delayed_focus_exit = false;
+	delayed_focus_exit = 0;
 }
 
 TextEdit::~TextEdit() {

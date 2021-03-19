@@ -337,7 +337,7 @@ private:
 	bool setting_text;
 
 	bool delayed_focus_out;
-	bool delayed_focus_exit;
+	int delayed_focus_exit;
 
 	// data
 	Text text;
