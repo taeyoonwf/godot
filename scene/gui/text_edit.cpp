@@ -1729,7 +1729,6 @@ void TextEdit::_notification(int p_what) {
 			}
 		} break;
 		case NOTIFICATION_FOCUS_ENTER: {
-
 			if (caret_blink_enabled) {
 				caret_blink_timer->start();
 			} else {
@@ -1742,20 +1741,13 @@ void TextEdit::_notification(int p_what) {
 
 			if (OS::get_singleton()->has_virtual_keyboard() && virtual_keyboard_enabled)
 				OS::get_singleton()->show_virtual_keyboard(get_text(), get_global_rect(), true);
+			delayed_focus_exit = false;
 		} break;
 		case NOTIFICATION_FOCUS_EXIT: {
-
-			if (caret_blink_enabled) {
-				caret_blink_timer->stop();
-			}
-
-			OS::get_singleton()->set_ime_position(Point2());
-			OS::get_singleton()->set_ime_active(false);
-			ime_text = "";
-			ime_selection = Point2();
-
-			if (OS::get_singleton()->has_virtual_keyboard() && virtual_keyboard_enabled)
-				OS::get_singleton()->hide_virtual_keyboard();
+			if (delayed_focus_out)
+				delayed_focus_exit = true;
+			else
+				focus_exit();
 		} break;
 		case MainLoop::NOTIFICATION_OS_IME_UPDATE: {
 
@@ -1765,7 +1757,27 @@ void TextEdit::_notification(int p_what) {
 				update();
 			}
 		} break;
+		case NOTIFICATION_INTERNAL_PROCESS: {
+			if (delayed_focus_out && delay_focus_exit && !has_focus()) {
+				focus_exit();
+			}
+			delay_focus_exit = false;
+		}
 	}
+}
+
+void TextEdit::focus_exit() {
+	if (caret_blink_enabled) {
+		caret_blink_timer->stop();
+	}
+
+	OS::get_singleton()->set_ime_position(Point2());
+	OS::get_singleton()->set_ime_active(false);
+	ime_text = "";
+	ime_selection = Point2();
+
+	if (OS::get_singleton()->has_virtual_keyboard() && virtual_keyboard_enabled)
+		OS::get_singleton()->hide_virtual_keyboard();
 }
 
 void TextEdit::_consume_pair_symbol(CharType ch) {
@@ -4923,6 +4935,19 @@ void TextEdit::clear() {
 	setting_text = false;
 };
 
+void TextEdit::set_delayed_focus_out(bool p_delayed_focus_out) {
+	if (delayed_focus_out == p_delayed_focus_out)
+		return;
+
+	delayed_focus_out = p_delayed_focus_out;
+	set_process_internal(delayed_focus_out);
+}
+
+bool TextEdit::is_delayed_focus_out() const {
+
+	return delayed_focus_out;
+}
+
 void TextEdit::set_readonly(bool p_readonly) {
 
 	if (readonly == p_readonly)
@@ -7046,6 +7071,9 @@ void TextEdit::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_readonly", "enable"), &TextEdit::set_readonly);
 	ClassDB::bind_method(D_METHOD("is_readonly"), &TextEdit::is_readonly);
 
+	ClassDB::bind_method(D_METHOD("set_delayed_focus_out", "enable"), &TextEdit::set_delayed_focus_out);
+	ClassDB::bind_method(D_METHOD("is_delayed_focus_out"), &TextEdit::is_delayed_focus_out);
+
 	ClassDB::bind_method(D_METHOD("set_wrap_enabled", "enable"), &TextEdit::set_wrap_enabled);
 	ClassDB::bind_method(D_METHOD("is_wrap_enabled"), &TextEdit::is_wrap_enabled);
 	ClassDB::bind_method(D_METHOD("set_context_menu_enabled", "enable"), &TextEdit::set_context_menu_enabled);
@@ -7328,6 +7356,9 @@ TextEdit::TextEdit() {
 	first_draw = true;
 
 	executing_line = -1;
+
+	delayed_focus_out = false;
+	delayed_focus_exit = false;
 }
 
 TextEdit::~TextEdit() {

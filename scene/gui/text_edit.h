@@ -336,6 +336,9 @@ private:
 
 	bool setting_text;
 
+	bool delayed_focus_out;
+	bool delayed_focus_exit;
+
 	// data
 	Text text;
 
@@ -534,6 +537,7 @@ protected:
 	void _insert_text_at_cursor(const String &p_text);
 	void _gui_input(const Ref<InputEvent> &p_gui_input);
 	void _notification(int p_what);
+	void focus_exit();
 
 	void _consume_pair_symbol(CharType ch);
 	void _consume_backspace_for_pair_symbol(int prev_line, int prev_column);
@@ -671,6 +675,9 @@ public:
 
 	void set_right_click_moves_caret(bool p_enable);
 	bool is_right_click_moving_caret() const;
+
+	void set_delayed_focus_out(bool p_delayed_focus_out);
+	bool is_delayed_focus_out() const;
 
 	void set_readonly(bool p_readonly);
 	bool is_readonly() const;
