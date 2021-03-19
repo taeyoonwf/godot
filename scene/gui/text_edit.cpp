@@ -1735,6 +1735,9 @@ void TextEdit::_notification(int p_what) {
 				draw_caret = true;
 			}
 
+			if (delayed_focus_out && delayed_focus_exit > 0)
+				break;
+
 			OS::get_singleton()->set_ime_active(true);
 			Point2 cursor_pos = Point2(cursor_get_column(), cursor_get_line()) * get_row_height();
 			OS::get_singleton()->set_ime_position(get_global_position() + cursor_pos);
@@ -1758,9 +1761,11 @@ void TextEdit::_notification(int p_what) {
 			}
 		} break;
 		case NOTIFICATION_INTERNAL_PROCESS: {
-			if (delayed_focus_out && delayed_focus_exit == 1 && !has_focus())
-				focus_exit();
-			delayed_focus_exit = MAX(0, delayed_focus_exit - 1);
+			if (delayed_focus_out) {
+				if (delayed_focus_exit == 1 && !has_focus())
+					focus_exit();
+				delayed_focus_exit = MAX(0, delayed_focus_exit - 1);
+			}
 		}
 	}
 }
