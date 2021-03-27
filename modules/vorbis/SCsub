@@ -14,7 +14,7 @@ stub = True
 if env["builtin_libvorbis"]:
     thirdparty_dir = "#thirdparty/libvorbis/"
     thirdparty_sources = [
-        # "analysis.c",
+        "analysis.c",
         # "barkmel.c",
         "bitrate.c",
         "block.c",
@@ -36,9 +36,10 @@ if env["builtin_libvorbis"]:
         "smallft.c",
         "synthesis.c",
         # "tone.c",
-        # "vorbisenc.c",
+        "vorbisenc.c",
         "vorbisfile.c",
         "window.c",
+        # "examples/encoder_example.c"
     ]
 
     thirdparty_sources = [thirdparty_dir + file for file in thirdparty_sources]
@@ -54,4 +55,4 @@ if env["builtin_libvorbis"]:
     env_thirdparty.add_source_files(env.modules_sources, thirdparty_sources)
 
 # Module files
-env_vorbis.add_source_files(env.modules_sources, "register_types.cpp")
+env_vorbis.add_source_files(env.modules_sources, "*.cpp")

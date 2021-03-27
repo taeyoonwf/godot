@@ -65,9 +65,9 @@ RUN rm ./bin/godot.x11.tools.64.mono
 RUN mkdir /root/build
 RUN cp -r bin /root/build/
 
-RUN scons p=android target=release_debug android_arch=arm64v8 module_mono_enabled=yes -j8 mono_prefix=/root/mono-installs/android-arm64-v8a-release 
+RUN scons p=android target=release_debug android_arch=arm64v8 module_mono_enabled=yes -j8 mono_prefix=/root/mono-installs/android-arm64-v8a-release
+RUN scons p=android target=release_debug android_arch=armv7 module_mono_enabled=yes -j8 mono_prefix=/root/mono-installs/android-armeabi-v7a-release
 RUN scons p=android target=release android_arch=arm64v8 module_mono_enabled=yes -j8 mono_prefix=/root/mono-installs/android-arm64-v8a-release
-RUN scons p=android target=release_debug android_arch=armv7 module_mono_enabled=yes -j8 mono_prefix=/root/mono-installs/android-armeabi-v7a-release 
 RUN scons p=android target=release android_arch=armv7 module_mono_enabled=yes -j8 mono_prefix=/root/mono-installs/android-armeabi-v7a-release
 WORKDIR /root/godot/platform/android/java
 RUN ./gradlew generateGodotTemplates && rm -rf /root/android-toolchains
