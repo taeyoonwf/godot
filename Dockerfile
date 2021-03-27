@@ -33,7 +33,7 @@ RUN apt update && apt install -yy dotnet-sdk-5.0 pkg-config
 RUN git clone https://github.com/godotengine/godot-mono-builds.git
 RUN git clone https://github.com/mono/mono
 WORKDIR /root/mono
-#RUN git submodule update --init --recursive
+RUN git checkout mono-6.12.0.130
 
 ENV MONO_SOURCE_ROOT=/root/mono
 ENV PATH=${PATH}:/root/mono-configs/bcl/runtime/_tmpinst/bin
@@ -73,7 +73,7 @@ RUN ./gradlew generateGodotTemplates && rm -rf /root/android-toolchains
 WORKDIR /root
 RUN git clone https://github.com/taeyoonwf/Godot-Android-Admob-Plugin.git
 WORKDIR /root/Godot-Android-Admob-Plugin/admob-plugin
-RUN cp /root/build/bin/godot-lib.debug.aar /root/Godot-Android-Admob-Plugin/admob-plugin/godot-lib.release/godot-lib.release.aar
+RUN cp /root/godot/bin/godot-lib.debug.aar /root/Godot-Android-Admob-Plugin/admob-plugin/godot-lib.release/godot-lib.release.aar
 RUN chmod +x gradlew && ./gradlew build
 RUN mkdir -p /root/build/admob/android/plugins
 RUN cp -r /root/Godot-Android-Admob-Plugin/admob-lib /root/build/admob/
