@@ -11,7 +11,8 @@ protected:
   static void _bind_methods();
 
 public:
-  Error save_to_ogg(const String &p_path, const PoolVector<uint8_t> &p_data);
+	Error save_to_ogg(const String &p_path, const PoolVector<uint8_t> &p_data);
+  PoolVector<uint8_t> wav_to_ogg(const PoolVector<uint8_t> &p_data);
 };
 
 #endif

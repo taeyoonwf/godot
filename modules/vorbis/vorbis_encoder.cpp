@@ -2,16 +2,8 @@
 #include "vorbis_encoder.h"
 #include <vorbis/vorbisenc.h>
 
-Error VorbisEncoder::save_to_ogg(const String &p_path, const PoolVector<uint8_t>& p_data) {
-  String file_path = p_path;
-  if (!(file_path.substr(file_path.length() - 4, 4) == ".ogg")) {
-    file_path += ".ogg";
-  }
-
-  FileAccessRef file = FileAccess::open(file_path, FileAccess::WRITE); //Overrides existing
-
-  ERR_FAIL_COND_V(!file, ERR_FILE_CANT_WRITE);
-
+PoolVector<uint8_t> VorbisEncoder::wav_to_ogg(const PoolVector<uint8_t>& p_data) {
+	PoolVector<uint8_t> ret;
   const int READ = 1024;
   signed char readbuffer[READ*4+44];
 
@@ -27,7 +19,7 @@ Error VorbisEncoder::save_to_ogg(const String &p_path, const PoolVector<uint8_t>
 	vorbis_dsp_state vd; /* central working state for the packet->PCM decoder */
 	vorbis_block     vb; /* local working space for packet->PCM decode */
 
-  int eos=0,ret;
+  int eos=0, check;
   int begin = 0;
 
   for (int i=0; i<30; i++)
@@ -40,9 +32,9 @@ Error VorbisEncoder::save_to_ogg(const String &p_path, const PoolVector<uint8_t>
   }
 
 	vorbis_info_init(&vi);
-	ret=vorbis_encode_init_vbr(&vi,2,44100,0.4);
-  if (ret) {
-		return ERR_FILE_CORRUPT;
+	check = vorbis_encode_init_vbr(&vi,2,44100,0.4);
+  if (check) {
+		return ret;
 	}
 
   vorbis_comment_init(&vc);
@@ -71,12 +63,11 @@ Error VorbisEncoder::save_to_ogg(const String &p_path, const PoolVector<uint8_t>
       int result=ogg_stream_flush(&os,&og);
       if(result==0)break;
 
-			file->store_buffer(og.header, og.header_len);
-			file->store_buffer(og.body, og.body_len);
-      // fwrite(og.header,1,og.header_len,stdout);
-      // fwrite(og.body,1,og.body_len,stdout);
+			for (int i = 0; i < (int)og.header_len; i++)
+				ret.push_back(og.header[i]);
+			for (int i = 0; i < (int)og.body_len; i++)
+				ret.push_back(og.body[i]);
     }
-
   }
 
 	int datalen = p_data.size();
@@ -91,10 +82,6 @@ Error VorbisEncoder::save_to_ogg(const String &p_path, const PoolVector<uint8_t>
     // long bytes=fread(readbuffer,1,READ*4,stdin); /* stereo hardwired here */
 
     if(bytes==0){
-      /* end of file.  this can be done implicitly in the mainline,
-         but it's easier to see here in non-clever fashion.
-         Tell the library we're at end of stream so that it can handle
-         the last frame and mark end of stream in the output properly */
       vorbis_analysis_wrote(&vd,0);
 
     }else{
@@ -133,13 +120,10 @@ Error VorbisEncoder::save_to_ogg(const String &p_path, const PoolVector<uint8_t>
         while(!eos){
           int result=ogg_stream_pageout(&os,&og);
           if(result==0)break;
-					file->store_buffer(og.header, og.header_len);
-					file->store_buffer(og.body, og.body_len);
-          // fwrite(og.header,1,og.header_len,stdout);
-          // fwrite(og.body,1,og.body_len,stdout);
-
-          /* this could be set above, but for illustrative purposes, I do
-             it here (to show that vorbis does know where the stream ends) */
+					for (int j = 0; j < (int)og.header_len; j++)
+						ret.push_back(og.header[j]);
+					for (int j = 0; j < (int)og.body_len; j++)
+						ret.push_back(og.body[j]);
 
           if(ogg_page_eos(&og))eos=1;
         }
@@ -147,13 +131,31 @@ Error VorbisEncoder::save_to_ogg(const String &p_path, const PoolVector<uint8_t>
     }
   }
 
-  /* clean up and exit.  vorbis_info_clear() must be called last */
-
   ogg_stream_clear(&os);
   vorbis_block_clear(&vb);
   vorbis_dsp_clear(&vd);
   vorbis_comment_clear(&vc);
   vorbis_info_clear(&vi);
+
+	return ret;
+}
+
+Error VorbisEncoder::save_to_ogg(const String &p_path, const PoolVector<uint8_t>& p_data) {
+	PoolVector<uint8_t> ret = wav_to_ogg(p_data);
+	if (ret.size() == 0) {
+		return ERR_FILE_CORRUPT;
+	}
+
+  String file_path = p_path;
+  if (!(file_path.substr(file_path.length() - 4, 4) == ".ogg")) {
+    file_path += ".ogg";
+  }
+
+  FileAccessRef file = FileAccess::open(file_path, FileAccess::WRITE); //Overrides existing
+
+  ERR_FAIL_COND_V(!file, ERR_FILE_CANT_WRITE);
+
+	file->store_buffer(ret.read().ptr(), ret.size());
 
 	file->close();
 
@@ -161,5 +163,6 @@ Error VorbisEncoder::save_to_ogg(const String &p_path, const PoolVector<uint8_t>
 }
 
 void VorbisEncoder::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("wav_to_ogg", "data"), &VorbisEncoder::wav_to_ogg);
 	ClassDB::bind_method(D_METHOD("save_to_ogg", "path", "data"), &VorbisEncoder::save_to_ogg);
 }
