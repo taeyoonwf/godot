@@ -142,6 +142,7 @@ public:
 	PoolVector<uint8_t> get_data() const;
 
 	Error save_to_wav(const String &p_path);
+	Error save_to_ogg(const String &p_path);
 
 	virtual Ref<AudioStreamPlayback> instance_playback();
 	virtual String get_stream_name() const;
