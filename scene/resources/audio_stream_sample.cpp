@@ -591,10 +591,6 @@ Error AudioStreamSample::save_to_wav(const String &p_path) {
 	return OK;
 }
 
-Error AudioStreamSample::save_to_ogg(const String &p_path) {
-	return OK;
-}
-
 Ref<AudioStreamPlayback> AudioStreamSample::instance_playback() {
 
 	Ref<AudioStreamPlaybackSample> sample;
