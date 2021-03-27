@@ -19,7 +19,7 @@ ENV ANDROID_HOME=/usr/lib/android-sdk
 ENV ANDROID_SDK_ROOT=/usr/lib/android-sdk
 ENV ANDROID_NDK_ROOT=/root/android-ndk-r21e
 
-RUN apt install -yy autoconf libtool automake build-essential gettext openjdk-8-jdk
+RUN apt install -yy autoconf libtool automake build-essential gettext openjdk-11-jdk
 RUN apt install -yy software-properties-common lsb-release apt-transport-https ca-certificates
 RUN apt update
 RUN apt install -yy libx11-dev libxcursor-dev libxinerama-dev libxrandr-dev libxi-dev libsdl2-dev
