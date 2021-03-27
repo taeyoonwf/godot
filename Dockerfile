@@ -70,6 +70,16 @@ RUN scons p=android target=release_debug android_arch=armv7 module_mono_enabled=
 WORKDIR /root/godot/platform/android/java
 RUN ./gradlew generateGodotTemplates && rm -rf /root/android-toolchains
 
+WORKDIR /root
+RUN git clone https://github.com/taeyoonwf/Godot-Android-Admob-Plugin.git
+WORKDIR /root/Godot-Android-Admob-Plugin/admob-plugin
+RUN cp /root/build/bin/godot-lib.debug.aar /root/Godot-Android-Admob-Plugin/admob-plugin/godot-lib.release/godot-lib.release.aar
+RUN chmod +x gradlew && ./gradlew build
+RUN mkdir -p /root/build/admob/android/plugins
+RUN cp -r /root/Godot-Android-Admob-Plugin/admob-lib /root/build/admob/
+RUN cp godotadmob/build/outputs/aar/* /root/build/admob/android/plugins/
+RUN cp ../config/GodotAdMob.gdap /root/build/admob/android/plugins/
+
 WORKDIR /root/godot
 RUN mkdir -p /root/build/templates/3.2.3.rc.mono
 RUN cp bin/android_* /root/build/templates/3.2.3.rc.mono/
