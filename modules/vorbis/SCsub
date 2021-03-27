@@ -14,7 +14,7 @@ stub = True
 if env["builtin_libvorbis"]:
     thirdparty_dir = "#thirdparty/libvorbis/"
     thirdparty_sources = [
-        # "analysis.c",
+        "analysis.c",
         # "barkmel.c",
         "bitrate.c",
         "block.c",
