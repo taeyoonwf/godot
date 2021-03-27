@@ -28,7 +28,7 @@ RUN pip3 install scons dataclasses
 RUN wget https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb && \
     dpkg -i packages-microsoft-prod.deb && \
     rm -rf packages-microsoft-prod.deb
-RUN apt update && apt install -yy dotnet-sdk-5.0 pkg-config
+RUN apt update && apt install -yy dotnet-sdk-5.0 pkg-config vim
 
 RUN git clone https://github.com/godotengine/godot-mono-builds.git
 RUN git clone https://github.com/mono/mono
@@ -66,14 +66,16 @@ RUN mkdir /root/build
 RUN cp -r bin /root/build/
 
 RUN scons p=android target=release_debug android_arch=arm64v8 module_mono_enabled=yes -j8 mono_prefix=/root/mono-installs/android-arm64-v8a-release 
+RUN scons p=android target=release android_arch=arm64v8 module_mono_enabled=yes -j8 mono_prefix=/root/mono-installs/android-arm64-v8a-release
 RUN scons p=android target=release_debug android_arch=armv7 module_mono_enabled=yes -j8 mono_prefix=/root/mono-installs/android-armeabi-v7a-release 
+RUN scons p=android target=release android_arch=armv7 module_mono_enabled=yes -j8 mono_prefix=/root/mono-installs/android-armeabi-v7a-release
 WORKDIR /root/godot/platform/android/java
 RUN ./gradlew generateGodotTemplates && rm -rf /root/android-toolchains
 
 WORKDIR /root
 RUN git clone https://github.com/taeyoonwf/Godot-Android-Admob-Plugin.git
 WORKDIR /root/Godot-Android-Admob-Plugin/admob-plugin
-RUN cp /root/godot/bin/godot-lib.debug.aar /root/Godot-Android-Admob-Plugin/admob-plugin/godot-lib.release/godot-lib.release.aar
+RUN cp /root/godot/bin/godot-lib.release.aar /root/Godot-Android-Admob-Plugin/admob-plugin/godot-lib.release/
 RUN chmod +x gradlew && ./gradlew build
 RUN mkdir -p /root/build/admob/android/plugins
 RUN cp -r /root/Godot-Android-Admob-Plugin/admob-lib /root/build/admob/
