@@ -30,12 +30,12 @@
 
 #include "register_types.h"
 
-#include "audio_stream_vorbis_encoder.h"
+#include "vorbis_encoder.h"
 
 // Dummy module as libvorbis is needed by other modules (theora ...)
 
 void register_vorbis_types() {
-  ClassDB::register_class<AudioStreamVorbisEncoder>();
+  ClassDB::register_class<VorbisEncoder>();
 }
 
 void unregister_vorbis_types() {}

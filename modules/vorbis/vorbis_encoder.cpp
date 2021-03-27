@@ -1,10 +1,26 @@
-#include "audio_stream_vorbis_encoder.h"
+#include "vorbis_encoder.h"
+#include <vorbis/vorbisenc.h>
 
-Error AudioStreamVorbisEncoder::save_to_ogg(const String &p_path) {
+Error VorbisEncoder::save_to_ogg(const String &p_path, const PoolVector<uint8_t>& p_data) {
+  ogg_stream_state os; /* take physical pages, weld into a logical
+                          stream of packets */
+  ogg_page         og; /* one Ogg bitstream page.  Vorbis packets are inside */
+  ogg_packet       op; /* one raw packet of data for decode */
+
+  vorbis_info      vi; /* struct that stores all the static vorbis bitstream
+                          settings */
+  vorbis_comment   vc; /* struct that stores all the user comments */
+
+  vorbis_dsp_state vd; /* central working state for the packet->PCM decoder */
+  vorbis_block     vb; /* local working space for packet->PCM decode */
+
+  int datalen = p_data.size();
+  print_line("datalen " + itos(datalen));
+
 	return OK;
 }
 
-void AudioStreamVorbisEncoder::_bind_methods() {
+void VorbisEncoder::_bind_methods() {
 	/* ClassDB::bind_method(D_METHOD("set_data", "data"), &AudioStreamSample::set_data);
 	ClassDB::bind_method(D_METHOD("get_data"), &AudioStreamSample::get_data);
 
@@ -27,7 +43,7 @@ void AudioStreamVorbisEncoder::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("is_stereo"), &AudioStreamSample::is_stereo);
 
 	ClassDB::bind_method(D_METHOD("save_to_wav", "path"), &AudioStreamSample::save_to_wav); */
-	ClassDB::bind_method(D_METHOD("save_to_ogg", "path"), &AudioStreamVorbisEncoder::save_to_ogg);
+	ClassDB::bind_method(D_METHOD("save_to_ogg", "path", "data"), &VorbisEncoder::save_to_ogg);
 
 	/* ADD_PROPERTY(PropertyInfo(Variant::POOL_BYTE_ARRAY, "data", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_NOEDITOR), "set_data", "get_data");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "format", PROPERTY_HINT_ENUM, "8-Bit,16-Bit,IMA-ADPCM"), "set_format", "get_format");

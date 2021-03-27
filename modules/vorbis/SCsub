@@ -39,7 +39,7 @@ if env["builtin_libvorbis"]:
         "vorbisenc.c",
         "vorbisfile.c",
         "window.c",
-        "examples/encoder_example.c"
+        # "examples/encoder_example.c"
     ]
 
     thirdparty_sources = [thirdparty_dir + file for file in thirdparty_sources]
