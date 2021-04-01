@@ -15,9 +15,11 @@ class Recorder : public Object {
 
   static void _bind_methods();
 public:
-  static void start_recording();
-  static void finish_recording(bool);
-  static void startPlayback();
+  void start_recording();
+  void finish_recording(bool);
+  void start_playback();
+	static Recorder *get_singleton();
+
 	Recorder();
 };
 

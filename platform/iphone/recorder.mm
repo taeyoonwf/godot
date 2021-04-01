@@ -18,7 +18,7 @@ extern "C" {
 
 - (void)audioRecorderDidFinishRecording:(AVAudioRecorder *)recorder successfully:(BOOL)flag {
   if (!flag) {
-    Recorder::finish_recording(false);
+    // Recorder::get_singleton()->finish_recording(false);
   }
 }
 
@@ -27,6 +27,9 @@ extern "C" {
 @end
 
 void Recorder::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("start_recording"), &Recorder::start_recording);
+	ClassDB::bind_method(D_METHOD("finish_recording", "success"), &Recorder::finish_recording);
+	ClassDB::bind_method(D_METHOD("start_playback"), &Recorder::start_playback);
 };
 
 AVAudioRecorder* audioRecorder = nullptr;
@@ -60,10 +63,10 @@ void Recorder::finish_recording(BOOL success)
 {
   [audioRecorder stop];
   audioRecorder = nil;
-  startPlayback();
+  start_playback();
 }
 
-void Recorder::startPlayback()
+void Recorder::start_playback()
 {
   NSURL* docu = [NSURL fileURLWithPath:[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0]];
   NSURL* audioFilename = [docu URLByAppendingPathComponent:@"recording.wav"];
@@ -75,5 +78,9 @@ void Recorder::startPlayback()
   @catch (NSException *exception){
   }
 }
+
+/* Recorder *Recorder::get_singleton() {
+	return instance;
+}; */
 
 Recorder::Recorder() {}
