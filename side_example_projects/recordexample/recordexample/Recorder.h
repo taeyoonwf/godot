@@ -16,6 +16,7 @@
 
 class Recorder {
 public:
+  static MyObject* myObject;
   static AVAudioRecorder* audioRecorder;
   static AVAudioPlayer* audioPlayer;
   static void startRecording();

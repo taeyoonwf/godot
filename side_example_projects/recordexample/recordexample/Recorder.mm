@@ -21,7 +21,7 @@
 
 AVAudioRecorder* Recorder::audioRecorder = nullptr;
 AVAudioPlayer* Recorder::audioPlayer = nullptr;
-MyObject* mo = [MyObject alloc];
+MyObject* Recorder::myObject = [MyObject alloc];
 
 void Recorder::startRecording()
 {
@@ -40,7 +40,7 @@ void Recorder::startRecording()
               nil];
 
     audioRecorder = [[AVAudioRecorder alloc] initWithURL:audioFilename settings:recordSettings error:nil];
-    audioRecorder.delegate = mo;
+    audioRecorder.delegate = myObject;
     [audioRecorder record];
 }
 
@@ -48,6 +48,7 @@ void Recorder::finishRecording(BOOL success)
 {
   [audioRecorder stop];
   audioRecorder = nil;
+  startPlayback();
 }
 
 void Recorder::startPlayback()
@@ -56,7 +57,7 @@ void Recorder::startPlayback()
   NSURL* audioFilename = [docu URLByAppendingPathComponent:@"recording.wav"];
   @try {
     audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:audioFilename error:nil];
-    audioPlayer.delegate = mo;
+    audioPlayer.delegate = myObject;
     [audioPlayer play];
   }
   @catch (NSException *exception){
