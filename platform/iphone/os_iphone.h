@@ -41,6 +41,7 @@
 #include "icloud.h"
 #include "in_app_store.h"
 #include "ios.h"
+#include "recorder.h"
 #include "main/input_default.h"
 #include "servers/audio_server.h"
 #include "servers/visual/rasterizer.h"
@@ -71,6 +72,7 @@ private:
 	ICloud *icloud;
 #endif
 	iOS *ios;
+  Recorder *recorder;
 
 	MainLoop *main_loop;
 

@@ -183,6 +183,9 @@ Error OSIPhone::initialize(const VideoMode &p_desired, int p_video_driver, int p
 	ios = memnew(iOS);
 	Engine::get_singleton()->add_singleton(Engine::Singleton("iOS", ios));
 
+	recorder = memnew(Recorder);
+	Engine::get_singleton()->add_singleton(Engine::Singleton("Recorder", recorder));
+
 	return OK;
 };
 
@@ -359,6 +362,7 @@ void OSIPhone::finalize() {
 	delete_main_loop();
 
 	memdelete(input);
+	memdelete(recorder);
 	memdelete(ios);
 
 #ifdef GAME_CENTER_ENABLED
