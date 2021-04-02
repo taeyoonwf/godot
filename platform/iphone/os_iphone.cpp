@@ -522,12 +522,35 @@ String OSIPhone::get_name() const {
 };
 
 String OSIPhone::get_model_name() const {
-
 	String model = ios->get_model();
 	if (model != "")
 		return model;
 
 	return OS_Unix::get_model_name();
+}
+
+void OSIPhone::start_recording_custom() {
+  if (is_recording_custom())
+		stop_recording_custom();
+	recorder->start_recording();
+}
+
+void OSIPhone::stop_recording_custom() {
+	if (is_recording_custom())
+		recorder->stop_recording();
+}
+
+bool OSIPhone::is_recording_custom() {
+	return recorder->is_recording();
+}
+
+void OSIPhone::start_playback_custom() {
+  recorder->start_playback();
+}
+
+PoolVector<uint8_t> get_wav_recording_custom() {
+  PoolVector<uint8_t> r;
+  return r;
 }
 
 Size2 OSIPhone::get_window_size() const {

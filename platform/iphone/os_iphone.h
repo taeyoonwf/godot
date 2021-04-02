@@ -181,6 +181,12 @@ public:
 	virtual String get_name() const;
 	virtual String get_model_name() const;
 
+  virtual void start_recording_custom();
+  virtual void stop_recording_custom();
+  virtual bool is_recording_custom();
+  virtual void start_playback_custom();
+  virtual PoolVector<uint8_t> get_wav_recording_custom();
+
 	Error shell_open(String p_uri);
 
 	String get_user_data_dir() const;

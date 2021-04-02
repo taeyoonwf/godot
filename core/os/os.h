@@ -292,6 +292,12 @@ public:
 
 	virtual void yield();
 
+  virtual void start_recording_custom() {}
+  virtual void stop_recording_custom() {}
+  virtual bool is_recording_custom() { return false; }
+  virtual void start_playback_custom() {}
+  virtual PoolVector<uint8_t> get_wav_recording_custom() { PoolVector<uint8_t> r; return r; }
+
 	enum Weekday {
 		DAY_SUNDAY,
 		DAY_MONDAY,

@@ -602,6 +602,27 @@ String _OS::get_model_name() const {
 	return OS::get_singleton()->get_model_name();
 }
 
+void _OS::start_recording_custom() {
+  OS::get_singleton()->start_recording_custom();
+}
+
+void _OS::stop_recording_custom() {
+  OS::get_singleton()->stop_recording_custom();
+}
+
+bool _OS::is_recording_custom() {
+  return OS::get_singleton()->is_recording_custom();
+}
+
+void _OS::start_playback_custom() {
+  OS::get_singleton()->start_recording_custom();
+}
+
+PoolVector<uint8_t> _OS::get_wav_recording_custom()
+{
+	return OS::get_singleton()->get_wav_recording_custom();
+}
+
 bool _OS::is_ok_left_and_cancel_right() const {
 
 	return OS::get_singleton()->get_swap_ok_cancel();
@@ -1352,6 +1373,11 @@ void _OS::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_locale"), &_OS::get_locale);
 	ClassDB::bind_method(D_METHOD("get_latin_keyboard_variant"), &_OS::get_latin_keyboard_variant);
 	ClassDB::bind_method(D_METHOD("get_model_name"), &_OS::get_model_name);
+	ClassDB::bind_method(D_METHOD("start_recording_custom"), &_OS::start_recording_custom);
+	ClassDB::bind_method(D_METHOD("stop_recording_custom"), &_OS::stop_recording_custom);
+	ClassDB::bind_method(D_METHOD("is_recording_custom"), &_OS::is_recording_custom);
+	ClassDB::bind_method(D_METHOD("start_playback_custom"), &_OS::start_playback_custom);
+	ClassDB::bind_method(D_METHOD("get_wav_recording_custom"), &_OS::get_wav_recording_custom);
 
 	ClassDB::bind_method(D_METHOD("keyboard_get_layout_count"), &_OS::keyboard_get_layout_count);
 	ClassDB::bind_method(D_METHOD("keyboard_get_current_layout"), &_OS::keyboard_get_current_layout);

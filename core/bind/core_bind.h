@@ -251,6 +251,11 @@ public:
 	String keyboard_get_layout_name(int p_index) const;
 
 	String get_model_name() const;
+  void start_recording_custom();
+  void stop_recording_custom();
+  bool is_recording_custom();
+  void start_playback_custom();
+	PoolVector<uint8_t> get_wav_recording_custom();
 
 	void dump_memory_to_file(const String &p_file);
 	void dump_resources_to_file(const String &p_file);

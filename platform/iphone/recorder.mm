@@ -18,7 +18,7 @@ extern "C" {
 
 - (void)audioRecorderDidFinishRecording:(AVAudioRecorder *)recorder successfully:(BOOL)flag {
   if (!flag) {
-    // Recorder::get_singleton()->finish_recording(false);
+    [recorder stop];
   }
 }
 
@@ -27,9 +27,9 @@ extern "C" {
 @end
 
 void Recorder::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("start_recording"), &Recorder::start_recording);
-	ClassDB::bind_method(D_METHOD("finish_recording", "success"), &Recorder::finish_recording);
-	ClassDB::bind_method(D_METHOD("start_playback"), &Recorder::start_playback);
+	// ClassDB::bind_method(D_METHOD("start_recording"), &Recorder::start_recording);
+	// ClassDB::bind_method(D_METHOD("finish_recording"), &Recorder::finish_recording);
+	// ClassDB::bind_method(D_METHOD("start_playback"), &Recorder::start_playback);
 };
 
 AVAudioRecorder* audioRecorder = nullptr;
@@ -55,15 +55,19 @@ void Recorder::start_recording()
     audioRecorder = [[AVAudioRecorder alloc] initWithURL:audioFilename settings:recordSettings error:nil];
     audioRecorder.delegate = myObject;
     [audioRecorder record];
-
-
 }
 
-void Recorder::finish_recording(BOOL success)
+void Recorder::stop_recording()
 {
   [audioRecorder stop];
   audioRecorder = nil;
-  start_playback();
+}
+
+bool Recorder::is_recording()
+{
+  if (audioRecorder == nil)
+		return false;
+	return [audioRecorder isRecording];
 }
 
 void Recorder::start_playback()
