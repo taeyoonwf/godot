@@ -548,7 +548,7 @@ void OSIPhone::start_playback_custom() {
   recorder->start_playback();
 }
 
-PoolVector<uint8_t> get_wav_recording_custom() {
+PoolVector<uint8_t> OSIPhone::get_wav_recording_custom() {
   PoolVector<uint8_t> r;
   return r;
 }
