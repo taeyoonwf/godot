@@ -532,10 +532,12 @@ String OSIPhone::get_model_name() const {
 void OSIPhone::start_recording_custom() {
   if (is_recording_custom())
 		stop_recording_custom();
+  print_line("OSIPhone::start_recording_custom");
 	recorder->start_recording();
 }
 
 void OSIPhone::stop_recording_custom() {
+  print_line("OSIPhone::stop_recording_custom");
 	if (is_recording_custom())
 		recorder->stop_recording();
 }

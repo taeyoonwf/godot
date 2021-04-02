@@ -38,6 +38,8 @@ MyObject* myObject = [MyObject alloc];
 
 void Recorder::start_recording()
 {
+  NSLog(@"Recorder::start_recording");
+
   NSURL* docu = [NSURL fileURLWithPath:[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0]];
   NSURL* audioFilename = [docu URLByAppendingPathComponent:@"recording.wav"];
   NSDictionary *recordSettings = [NSDictionary
@@ -59,7 +61,9 @@ void Recorder::start_recording()
 
 void Recorder::stop_recording()
 {
-  [audioRecorder stop];
+  NSLog(@"Recorder::stop_recording");
+  if (audioRecorder != nil)
+	  [audioRecorder stop];
   audioRecorder = nil;
 }
 
@@ -72,6 +76,7 @@ bool Recorder::is_recording()
 
 void Recorder::start_playback()
 {
+  NSLog(@"Recorder::start_playback");
   NSURL* docu = [NSURL fileURLWithPath:[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0]];
   NSURL* audioFilename = [docu URLByAppendingPathComponent:@"recording.wav"];
   @try {
