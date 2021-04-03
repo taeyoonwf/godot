@@ -127,7 +127,7 @@ int add_cmdline(int p_argc, char **p_args) {
 };
 
 - (BOOL)prefersStatusBarHidden {
-	return YES;
+	return NO; // YES;
 }
 
 - (BOOL)prefersHomeIndicatorAutoHidden {
