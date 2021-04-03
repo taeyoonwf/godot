@@ -681,7 +681,8 @@ static int frame_count = 0;
 
 	// prevent to stop music in another background app
 	if (GLOBAL_GET("audio/enable_audio_input")) {
-		[[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
+  	[[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord mode:AVAudioSessionModeDefault options:AVAudioSessionCategoryOptionDefaultToSpeaker error:NULL];
+		// [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
 		[[AVAudioSession sharedInstance] setActive:true error:NULL];
 	} else {
 		[[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryAmbient error:nil];

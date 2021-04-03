@@ -35,6 +35,7 @@ void Recorder::_bind_methods() {
 AVAudioRecorder* audioRecorder = nullptr;
 AVAudioPlayer* audioPlayer = nullptr;
 MyObject* myObject = [MyObject alloc];
+NSData* raw_recording_data = nullptr;
 
 void Recorder::start_recording()
 {
@@ -88,8 +89,13 @@ void Recorder::start_playback()
   }
 }
 
-/* Recorder *Recorder::get_singleton() {
-	return instance;
-}; */
+const uint8_t* Recorder::get_raw_wav_data(int& length)
+{
+  NSURL* docu = [NSURL fileURLWithPath:[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0]];
+  NSURL* audioFilename = [docu URLByAppendingPathComponent:@"recording.wav"];
+  raw_recording_data = [NSData dataWithContentsOfURL:audioFilename];
+	length = [raw_recording_data length];
+  return (const uint8_t*)raw_recording_data.bytes;
+}
 
 Recorder::Recorder() {}

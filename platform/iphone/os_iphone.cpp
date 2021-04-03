@@ -551,8 +551,17 @@ void OSIPhone::start_playback_custom() {
 }
 
 PoolVector<uint8_t> OSIPhone::get_wav_recording_custom() {
-  PoolVector<uint8_t> r;
-  return r;
+	int length;
+	const uint8_t* raw = recorder->get_raw_wav_data(length);
+  PoolVector<uint8_t> data;
+  data.resize(length);
+	PoolVector<uint8_t>::Write wb = data.write();
+
+	for (int i = 0; i < length; ++i)
+		wb[i] = raw[i];
+  wb.release();
+
+  return data;
 }
 
 Size2 OSIPhone::get_window_size() const {

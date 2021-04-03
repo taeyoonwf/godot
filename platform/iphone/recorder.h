@@ -19,7 +19,7 @@ public:
   bool is_recording();
   void stop_recording();
   void start_playback();
-	static Recorder *get_singleton();
+	const uint8_t* get_raw_wav_data(int& length);
 
 	Recorder();
 };

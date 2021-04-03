@@ -22,7 +22,7 @@ PoolVector<uint8_t> VorbisEncoder::wav_to_ogg(const PoolVector<uint8_t>& p_data)
   int eos=0, check;
   int begin = 0;
 
-  for (int i=0; i<30; i++)
+  for (int i=0; i<4096*3/2; i++)
   {
     if (p_data[i] == 'd' && p_data[i+1] == 'a') {
 			i += 6;
