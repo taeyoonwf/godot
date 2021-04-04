@@ -2868,6 +2868,10 @@ void TextEdit::_gui_input(const Ref<InputEvent> &p_gui_input) {
 
 				if (readonly)
 					break;
+				if (OS::get_singleton()->get_name() == "iOS") {
+					release_focus();
+					break;
+				}
 
 				String ins = "\n";
 
