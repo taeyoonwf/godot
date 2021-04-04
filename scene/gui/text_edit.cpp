@@ -1762,8 +1762,10 @@ void TextEdit::_notification(int p_what) {
 		} break;
 		case NOTIFICATION_INTERNAL_PROCESS: {
 			if (delayed_focus_out) {
-				if (delayed_focus_exit == 1 && !has_focus())
-					focus_exit();
+				if (delayed_focus_exit == 1 && !has_focus()) {
+					if (!get_focus_owner() || !get_focus_owner()->is_text_field())
+						focus_exit();
+				}
 				delayed_focus_exit = MAX(0, delayed_focus_exit - 1);
 			}
 		}
