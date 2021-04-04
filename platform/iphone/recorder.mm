@@ -17,9 +17,9 @@ extern "C" {
 @implementation MyObject
 
 - (void)audioRecorderDidFinishRecording:(AVAudioRecorder *)recorder successfully:(BOOL)flag {
-  if (!flag) {
-    [recorder stop];
-  }
+	if (!flag) {
+		[recorder stop];
+	}
 }
 
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag {
@@ -39,63 +39,62 @@ NSData* raw_recording_data = nullptr;
 
 void Recorder::start_recording()
 {
-  NSLog(@"Recorder::start_recording");
+	NSLog(@"Recorder::start_recording");
 
-  NSURL* docu = [NSURL fileURLWithPath:[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0]];
-  NSURL* audioFilename = [docu URLByAppendingPathComponent:@"recording.wav"];
-  NSDictionary *recordSettings = [NSDictionary
-              dictionaryWithObjectsAndKeys:
-              [NSNumber numberWithInt:AVAudioQualityMax],
-              AVEncoderAudioQualityKey,
-              [NSNumber numberWithInt: 2],
-              AVNumberOfChannelsKey,
-              [NSNumber numberWithFloat:44100.0],
-              AVSampleRateKey,
-              [NSNumber numberWithInt:kAudioFormatLinearPCM],
-              AVFormatIDKey,
-              nil];
+	NSURL* docu = [NSURL fileURLWithPath:[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0]];
+	NSURL* audioFilename = [docu URLByAppendingPathComponent:@"recording.wav"];
+	NSDictionary *recordSettings = [NSDictionary
+		dictionaryWithObjectsAndKeys:
+		[NSNumber numberWithInt:AVAudioQualityMax],
+		AVEncoderAudioQualityKey,
+		[NSNumber numberWithInt: 2],
+		AVNumberOfChannelsKey,
+		[NSNumber numberWithFloat:44100.0],
+		AVSampleRateKey,
+		[NSNumber numberWithInt:kAudioFormatLinearPCM],
+		AVFormatIDKey,
+		nil];
 
-    audioRecorder = [[AVAudioRecorder alloc] initWithURL:audioFilename settings:recordSettings error:nil];
-    audioRecorder.delegate = myObject;
-    [audioRecorder record];
+	audioRecorder = [[AVAudioRecorder alloc] initWithURL:audioFilename settings:recordSettings error:nil];
+	audioRecorder.delegate = myObject;
+	[audioRecorder record];
 }
 
 void Recorder::stop_recording()
 {
-  NSLog(@"Recorder::stop_recording");
-  if (audioRecorder != nil)
-	  [audioRecorder stop];
-  audioRecorder = nil;
+	if (audioRecorder != nil)
+		[audioRecorder stop];
+	audioRecorder = nil;
 }
 
 bool Recorder::is_recording()
 {
-  if (audioRecorder == nil)
+	if (audioRecorder == nil)
 		return false;
 	return [audioRecorder isRecording];
 }
 
 void Recorder::start_playback()
 {
-  NSLog(@"Recorder::start_playback");
-  NSURL* docu = [NSURL fileURLWithPath:[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0]];
-  NSURL* audioFilename = [docu URLByAppendingPathComponent:@"recording.wav"];
-  @try {
-    audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:audioFilename error:nil];
-    // audioPlayer.delegate = myObject;
-    [audioPlayer play];
-  }
-  @catch (NSException *exception){
-  }
+	NSURL* docu = [NSURL fileURLWithPath:[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0]];
+	NSURL* audioFilename = [docu URLByAppendingPathComponent:@"recording.wav"];
+	@try {
+		audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:audioFilename error:nil];
+		audioPlayer.delegate = myObject;
+		[audioPlayer play];
+	}
+	@catch (NSException *exception){
+	}
 }
 
 const uint8_t* Recorder::get_raw_wav_data(int& length)
 {
-  NSURL* docu = [NSURL fileURLWithPath:[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0]];
-  NSURL* audioFilename = [docu URLByAppendingPathComponent:@"recording.wav"];
-  raw_recording_data = [NSData dataWithContentsOfURL:audioFilename];
+	NSURL* docu = [NSURL fileURLWithPath:[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0]];
+	NSURL* audioFilename = [docu URLByAppendingPathComponent:@"recording.wav"];
+	raw_recording_data = [NSData dataWithContentsOfURL:audioFilename];
 	length = [raw_recording_data length];
-  return (const uint8_t*)raw_recording_data.bytes;
+
+	return (const uint8_t*)raw_recording_data.bytes;
 }
 
 Recorder::Recorder() {}

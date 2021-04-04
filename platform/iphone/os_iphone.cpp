@@ -530,14 +530,12 @@ String OSIPhone::get_model_name() const {
 }
 
 void OSIPhone::start_recording_custom() {
-  if (is_recording_custom())
+	if (is_recording_custom())
 		stop_recording_custom();
-  print_line("OSIPhone::start_recording_custom");
 	recorder->start_recording();
 }
 
 void OSIPhone::stop_recording_custom() {
-  print_line("OSIPhone::stop_recording_custom");
 	if (is_recording_custom())
 		recorder->stop_recording();
 }
@@ -547,21 +545,21 @@ bool OSIPhone::is_recording_custom() {
 }
 
 void OSIPhone::start_playback_custom() {
-  recorder->start_playback();
+	recorder->start_playback();
 }
 
 PoolVector<uint8_t> OSIPhone::get_wav_recording_custom() {
 	int length;
 	const uint8_t* raw = recorder->get_raw_wav_data(length);
-  PoolVector<uint8_t> data;
-  data.resize(length);
+	PoolVector<uint8_t> data;
+	data.resize(length);
 	PoolVector<uint8_t>::Write wb = data.write();
 
 	for (int i = 0; i < length; ++i)
 		wb[i] = raw[i];
-  wb.release();
+	wb.release();
 
-  return data;
+	return data;
 }
 
 Size2 OSIPhone::get_window_size() const {

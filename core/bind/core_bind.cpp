@@ -603,19 +603,19 @@ String _OS::get_model_name() const {
 }
 
 void _OS::start_recording_custom() {
-  OS::get_singleton()->start_recording_custom();
+	OS::get_singleton()->start_recording_custom();
 }
 
 void _OS::stop_recording_custom() {
-  OS::get_singleton()->stop_recording_custom();
+	OS::get_singleton()->stop_recording_custom();
 }
 
 bool _OS::is_recording_custom() {
-  return OS::get_singleton()->is_recording_custom();
+	return OS::get_singleton()->is_recording_custom();
 }
 
 void _OS::start_playback_custom() {
-  OS::get_singleton()->start_playback_custom();
+	OS::get_singleton()->start_playback_custom();
 }
 
 PoolVector<uint8_t> _OS::get_wav_recording_custom()
