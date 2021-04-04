@@ -39,8 +39,6 @@ NSData* raw_recording_data = nullptr;
 
 void Recorder::start_recording()
 {
-	NSLog(@"Recorder::start_recording");
-
 	NSURL* docu = [NSURL fileURLWithPath:[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0]];
 	NSURL* audioFilename = [docu URLByAppendingPathComponent:@"recording.wav"];
 	NSDictionary *recordSettings = [NSDictionary
