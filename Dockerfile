@@ -40,17 +40,20 @@ ENV PATH=${PATH}:/root/mono-configs/bcl/runtime/_tmpinst/bin
 ENV LD_LIBRARY_PATH=/root/mono-installs/desktop-linux-x86_64-release/lib
 
 WORKDIR /root/godot-mono-builds
-RUN python3 linux.py configure --target=x86_64
-RUN python3 linux.py make  -j8 --target=x86_64
+RUN python3 linux.py configure --target=x86_64 && \
+    python3 linux.py make  -j8 --target=x86_64 && \
+    rm -rf /root/mono-configs
+RUN python3 bcl.py make -j8 --product=desktop && \
+    rm -rf /root/mono-configs
 
-RUN python3 bcl.py make -j8 --product=desktop
 ENV MONO_PATH=/root/mono-installs/desktop-bcl/net_4_x
+RUN python3 bcl.py make -j8 --product=android && \
+    rm -rf /root/mono-configs
 
-RUN python3 bcl.py make -j8 --product=android
-RUN python3 android.py configure --target=armeabi-v7a --target=arm64-v8a
-RUN python3 android.py make  -j8 --target=armeabi-v7a --target=arm64-v8a
-
-RUN rm -rf /root/mono-configs
+RUN python3 android.py configure --target=armeabi-v7a --target=arm64-v8a && \
+    python3 android.py make  -j8 --target=armeabi-v7a --target=arm64-v8a && \
+    rm -rf /root/mono-configs && \
+    rm -rf /root/android-toolchains
 
 # build with the godot code from here
 WORKDIR /root
@@ -70,13 +73,16 @@ RUN scons p=android target=release_debug android_arch=armv7 module_mono_enabled=
 RUN scons p=android target=release android_arch=arm64v8 module_mono_enabled=yes -j8 mono_prefix=/root/mono-installs/android-arm64-v8a-release
 RUN scons p=android target=release android_arch=armv7 module_mono_enabled=yes -j8 mono_prefix=/root/mono-installs/android-armeabi-v7a-release
 WORKDIR /root/godot/platform/android/java
-RUN ./gradlew generateGodotTemplates && rm -rf /root/android-toolchains
+RUN ./gradlew generateGodotTemplates && \
+    rm -rf /usr/lib/android-sdk/ndk/* && \
+    rm -rf /root/.gradle/*
 
 WORKDIR /root
 RUN git clone https://github.com/taeyoonwf/Godot-Android-Admob-Plugin.git
 WORKDIR /root/Godot-Android-Admob-Plugin/admob-plugin
 RUN cp /root/godot/bin/godot-lib.release.aar /root/Godot-Android-Admob-Plugin/admob-plugin/godot-lib.release/
-RUN chmod +x gradlew && ./gradlew build
+RUN chmod +x gradlew && ./gradlew build && \
+    rm -rf /root/.gradle
 RUN mkdir -p /root/build/admob/android/plugins
 RUN cp -r /root/Godot-Android-Admob-Plugin/admob-lib /root/build/admob/
 RUN cp godotadmob/build/outputs/aar/* /root/build/admob/android/plugins/
