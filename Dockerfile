@@ -34,6 +34,7 @@ RUN git clone https://github.com/godotengine/godot-mono-builds.git
 RUN git clone https://github.com/mono/mono
 WORKDIR /root/mono
 RUN git checkout mono-6.12.0.130
+RUN git submodule update --init --recursive
 
 ENV MONO_SOURCE_ROOT=/root/mono
 ENV PATH=${PATH}:/root/mono-configs/bcl/runtime/_tmpinst/bin
