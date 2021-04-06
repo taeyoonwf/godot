@@ -76,20 +76,16 @@ CGFloat _points_to_pixels(CGFloat);
 
 void _show_keyboard(String p_existing, bool p_multiline, int p_cursor_start, int p_cursor_end) {
 	printf("instance on show is %p\n", _instance);
-	// keyboard_text = p_existing;
-	// [_instance open_keyboard];
- 	NSString *existingString = [[NSString alloc] initWithUTF8String:p_existing.utf8().get_data()];
+	NSString *existingString = [[NSString alloc] initWithUTF8String:p_existing.utf8().get_data()];
 	[_instance.keyboardView becomeFirstResponderWithString:existingString
-									multiline:p_multiline
-                  cursorStart:p_cursor_start
-                  cursorEnd:p_cursor_end];
+		multiline:p_multiline
+		cursorStart:p_cursor_start
+		cursorEnd:p_cursor_end];
 };
 
 void _hide_keyboard() {
 	printf("instance on hide is %p\n", _instance);
   [_instance.keyboardView resignFirstResponder];
-	// [_instance hide_keyboard];
-	// keyboard_text = "";
 };
 
 Rect2 _get_ios_window_safe_area(float p_window_width, float p_window_height) {
@@ -679,7 +675,7 @@ static void clear_touches() {
 
 	[context release];
 	context = nil;
-  self.keyboardView = nil;
+	self.keyboardView = nil;
 
 	[super dealloc];
 }
