@@ -39,7 +39,7 @@
 @class GLViewGestureRecognizer;
 @class GodotKeyboardInputView;
 
-@interface GLView : UIView <UIKeyInput> {
+@interface GLView : UIView {
 @private
 	// The pixel dimensions of the backbuffer
 	GLint backingWidth;
@@ -92,14 +92,6 @@
 - (void)startAnimation;
 - (void)stopAnimation;
 - (void)drawView;
-
-- (BOOL)canBecomeFirstResponder;
-
-- (void)open_keyboard;
-- (void)hide_keyboard;
-- (void)deleteBackward;
-- (BOOL)hasText;
-- (void)insertText:(NSString *)p_text;
 
 - (id)initGLES;
 - (BOOL)createFramebuffer;

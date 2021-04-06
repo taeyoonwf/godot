@@ -75,15 +75,18 @@ void _stop_video();
 CGFloat _points_to_pixels(CGFloat);
 
 void _show_keyboard(String p_existing) {
-	keyboard_text = p_existing;
 	printf("instance on show is %p\n", _instance);
-	[_instance open_keyboard];
+	// keyboard_text = p_existing;
+	// [_instance open_keyboard];
+ 	NSString *existingString = [[NSString alloc] initWithUTF8String:p_existing.utf8().get_data()];
+	[_instance.keyboardView becomeFirstResponderWithString:existingString];
 };
 
 void _hide_keyboard() {
 	printf("instance on hide is %p\n", _instance);
-	[_instance hide_keyboard];
-	keyboard_text = "";
+  [_instance.keyboardView resignFirstResponder];
+	// [_instance hide_keyboard];
+	// keyboard_text = "";
 };
 
 Rect2 _get_ios_window_safe_area(float p_window_width, float p_window_height) {
@@ -566,20 +569,6 @@ static void clear_touches() {
 	clear_touches();
 };
 
-- (BOOL)canBecomeFirstResponder {
-	return YES;
-};
-
-- (void)open_keyboard {
-	//keyboard_text = p_existing;
-	[self becomeFirstResponder];
-};
-
-- (void)hide_keyboard {
-	//keyboard_text = p_existing;
-	[self resignFirstResponder];
-};
-
 - (void)keyboardOnScreen:(NSNotification *)notification {
 	NSDictionary *info = notification.userInfo;
 	NSValue *value = info[UIKeyboardFrameEndUserInfoKey];
@@ -593,24 +582,6 @@ static void clear_touches() {
 - (void)keyboardHidden:(NSNotification *)notification {
 	OSIPhone::get_singleton()->set_virtual_keyboard_height(0);
 }
-
-- (void)deleteBackward {
-	if (keyboard_text.length())
-		keyboard_text.erase(keyboard_text.length() - 1, 1);
-	OSIPhone::get_singleton()->key(KEY_BACKSPACE, true);
-};
-
-- (BOOL)hasText {
-	return keyboard_text.length() ? YES : NO;
-};
-
-- (void)insertText:(NSString *)p_text {
-	String character;
-	character.parse_utf8([p_text UTF8String]);
-	keyboard_text = keyboard_text + character;
-	OSIPhone::get_singleton()->key(character[0] == 10 ? KEY_ENTER : character[0], true);
-	printf("inserting text with character %lc\n", (CharType)character[0]);
-};
 
 - (void)audioRouteChangeListenerCallback:(NSNotification *)notification {
 	printf("*********** route changed!\n");
