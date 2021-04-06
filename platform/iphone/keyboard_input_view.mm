@@ -5,8 +5,8 @@
 /*                           GODOT ENGINE                                */
 /*                      https://godotengine.org                          */
 /*************************************************************************/
-/* Copyright (c) 2007-2020 Juan Linietsky, Ariel Manzur.                 */
-/* Copyright (c) 2014-2020 Godot Engine contributors (cf. AUTHORS.md).   */
+/* Copyright (c) 2007-2021 Juan Linietsky, Ariel Manzur.                 */
+/* Copyright (c) 2014-2021 Godot Engine contributors (cf. AUTHORS.md).   */
 /*                                                                       */
 /* Permission is hereby granted, free of charge, to any person obtaining */
 /* a copy of this software and associated documentation files (the       */
@@ -28,13 +28,16 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
 
-#import <UIKit/UIKit.h>
 #import "keyboard_input_view.h"
 
 #include "core/os/keyboard.h"
+//#include "display_server_iphone.h"
 #include "os_iphone.h"
 
 @interface GodotKeyboardInputView () <UITextViewDelegate>
+
+@property(nonatomic, copy) NSString *previousText;
+@property(nonatomic, assign) NSRange previousSelectedRange;
 
 @end
 
@@ -63,10 +66,16 @@
 - (void)godot_commonInit {
 	self.hidden = YES;
 	self.delegate = self;
+
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(observeTextChange:)
+												 name:UITextViewTextDidChangeNotification
+											   object:self];
 }
 
 - (void)dealloc {
 	self.delegate = nil;
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 // MARK: Keyboard
@@ -75,38 +84,112 @@
 	return YES;
 }
 
-- (BOOL)becomeFirstResponderWithString:(NSString *)existingString {
+- (BOOL)becomeFirstResponderWithString:(NSString *)existingString multiline:(BOOL)flag cursorStart:(NSInteger)start cursorEnd:(NSInteger)end {
 	self.text = existingString;
+	self.previousText = existingString;
+
+	NSRange textRange;
+
+	// Either a simple cursor or a selection.
+	if (end > 0) {
+		textRange = NSMakeRange(start, end - start);
+	} else {
+		textRange = NSMakeRange(start, 0);
+	}
+
+	self.selectedRange = textRange;
+	self.previousSelectedRange = textRange;
+
 	return [self becomeFirstResponder];
 }
 
 - (BOOL)resignFirstResponder {
 	self.text = nil;
+	self.previousText = nil;
 	return [super resignFirstResponder];
 }
 
-// MARK: Delegate
+// MARK: OS Messages
 
-- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
-	if (textView != self) {
-		return NO;
+- (void)deleteText:(NSInteger)charactersToDelete {
+	for (int i = 0; i < charactersToDelete; i++) {
+		OSIPhone::get_singleton()->key(KEY_BACKSPACE, true);
+		OSIPhone::get_singleton()->key(KEY_BACKSPACE, false);
+	}
+}
+
+- (void)enterText:(NSString *)substring {
+	String characters;
+	characters.parse_utf8([substring UTF8String]);
+
+	for (int i = 0; i < characters.size(); i++) {
+		int character = characters[i];
+
+		switch (character) {
+			case 10:
+				character = KEY_ENTER;
+				break;
+			case 8198:
+				character = KEY_SPACE;
+				break;
+			default:
+				break;
+		}
+
+		OSIPhone::get_singleton()->key(character, true);
+		OSIPhone::get_singleton()->key(character, false);
+	}
+}
+
+// MARK: Observer
+
+- (void)observeTextChange:(NSNotification *)notification {
+	if (notification.object != self) {
+		return;
 	}
 
-	if (text.length == 0) {
-		for (int i = 0; i < range.length; i++) {
-			OSIPhone::get_singleton()->key(KEY_BACKSPACE, true);
+	if (self.previousSelectedRange.length == 0) {
+		// We are deleting all text before cursor if no range was selected.
+		// This way any inserted or changed text will be updated.
+		NSString *substringToDelete = [self.previousText substringToIndex:self.previousSelectedRange.location];
+		[self deleteText:substringToDelete.length];
+	} else {
+		// If text was previously selected
+		// we are sending only one `backspace`.
+		// It will remove all text from text input.
+		[self deleteText:1];
+	}
+
+	NSString *substringToEnter;
+
+	if (self.selectedRange.length == 0) {
+		// If previous cursor had a selection
+		// we have to calculate an inserted text.
+		if (self.previousSelectedRange.length != 0) {
+			NSInteger rangeEnd = self.selectedRange.location + self.selectedRange.length;
+			NSInteger rangeStart = MIN(self.previousSelectedRange.location, self.selectedRange.location);
+			NSInteger rangeLength = MAX(0, rangeEnd - rangeStart);
+
+			NSRange calculatedRange;
+
+			if (rangeLength >= 0) {
+				calculatedRange = NSMakeRange(rangeStart, rangeLength);
+			} else {
+				calculatedRange = NSMakeRange(rangeStart, 0);
+			}
+
+			substringToEnter = [self.text substringWithRange:calculatedRange];
+		} else {
+			substringToEnter = [self.text substringToIndex:self.selectedRange.location];
 		}
 	} else {
-		String characters;
-		characters.parse_utf8([text UTF8String]);
-
-		for (int i = 0; i < characters.size(); i++) {
-			int character = characters[i];
-			OSIPhone::get_singleton()->key(character == 10 ? KEY_ENTER : character, true);
-		}
+		substringToEnter = [self.text substringWithRange:self.selectedRange];
 	}
 
-	return YES;
+	[self enterText:substringToEnter];
+
+	self.previousText = self.text;
+	self.previousSelectedRange = self.selectedRange;
 }
 
 @end

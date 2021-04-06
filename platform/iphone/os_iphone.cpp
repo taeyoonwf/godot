@@ -480,14 +480,14 @@ bool OSIPhone::has_virtual_keyboard() const {
 	return true;
 };
 
-extern void _show_keyboard(String p_existing);
+extern void _show_keyboard(String p_existing, bool p_multiline, int p_cursor_start, int p_cursor_end);
 extern void _hide_keyboard();
 extern Error _shell_open(String p_uri);
 extern void _set_keep_screen_on(bool p_enabled);
 extern void _vibrate();
 
 void OSIPhone::show_virtual_keyboard(const String &p_existing_text, const Rect2 &p_screen_rect, bool p_multiline, int p_max_input_length, int p_cursor_start, int p_cursor_end) {
-	_show_keyboard(p_existing_text);
+	_show_keyboard(p_existing_text, p_multiline, p_cursor_start, p_cursor_end);
 };
 
 void OSIPhone::hide_virtual_keyboard() {
