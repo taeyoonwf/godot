@@ -1758,8 +1758,6 @@ void TextEdit::_notification(int p_what) {
 						cursor_start = pre_text.length();
 						cursor_end = cursor_start + post_text.length();
 					}
-					print_line("cursor_start : " + itos(cursor_start));
-					print_line("cursor_end : " + itos(cursor_end));
 					OS::get_singleton()->show_virtual_keyboard(get_text(), get_global_rect(), true, -1, cursor_start, cursor_end);
 				}
 				else {
