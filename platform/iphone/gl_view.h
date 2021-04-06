@@ -37,6 +37,7 @@
 
 @protocol GLViewDelegate;
 @class GLViewGestureRecognizer;
+@class GodotKeyboardInputView;
 
 @interface GLView : UIView <UIKeyInput> {
 @private
@@ -86,6 +87,7 @@
 @property(strong, nonatomic) UIWindow *backgroundWindow;
 
 @property(nonatomic) UITextAutocorrectionType autocorrectionType;
+@property(nonatomic, readonly, strong) GodotKeyboardInputView *keyboardView;
 
 - (void)startAnimation;
 - (void)stopAnimation;

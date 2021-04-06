@@ -6,6 +6,7 @@ iphone_lib = [
     "godot_iphone.cpp",
     "os_iphone.cpp",
     "semaphore_iphone.cpp",
+    "keyboard_input_view.mm",
     "gl_view.mm",
     "main.m",
     "app_delegate.mm",

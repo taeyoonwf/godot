@@ -30,6 +30,7 @@
 
 #import "gl_view.h"
 #import "gl_view_gesture_recognizer.h"
+#import "keyboard_input_view.h"
 
 #include "core/os/keyboard.h"
 #include "core/project_settings.h"
@@ -38,6 +39,12 @@
 
 #import <OpenGLES/EAGLDrawable.h>
 #import <QuartzCore/QuartzCore.h>
+
+@interface GLView ()
+
+@property(strong, nonatomic) GodotKeyboardInputView *keyboardView;
+
+@end
 
 /*
 @interface GLView (private)
@@ -658,6 +665,10 @@ static void clear_touches() {
 				   name:AVAudioSessionRouteChangeNotification
 				 object:nil];
 
+	printf("******** setting up keyboard input view\n");
+	self.keyboardView = [GodotKeyboardInputView new];
+	[self addSubview:self.keyboardView];
+
 	printf("******** adding observer for keyboard show/hide\n");
 	[[NSNotificationCenter defaultCenter]
 			addObserver:self
@@ -694,6 +705,7 @@ static void clear_touches() {
 
 	[context release];
 	context = nil;
+  self.keyboardView = nil;
 
 	[super dealloc];
 }
