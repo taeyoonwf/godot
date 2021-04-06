@@ -85,6 +85,7 @@
 }
 
 - (BOOL)becomeFirstResponderWithString:(NSString *)existingString multiline:(BOOL)flag cursorStart:(NSInteger)start cursorEnd:(NSInteger)end {
+  NSLog(@"%@ %ld %ld", existingString, start, end);
 	self.text = existingString;
 	self.previousText = existingString;
 
@@ -99,6 +100,8 @@
 
 	self.selectedRange = textRange;
 	self.previousSelectedRange = textRange;
+  NSLog(@"self.text : %@", self.text);
+  NSLog(@"self.previousText : %@", self.previousText);
 
 	return [self becomeFirstResponder];
 }
@@ -112,6 +115,7 @@
 // MARK: OS Messages
 
 - (void)deleteText:(NSInteger)charactersToDelete {
+  NSLog(@"deleteText: %d", charactersToDelete);
 	for (int i = 0; i < charactersToDelete; i++) {
 		OSIPhone::get_singleton()->key(KEY_BACKSPACE, true);
 		OSIPhone::get_singleton()->key(KEY_BACKSPACE, false);

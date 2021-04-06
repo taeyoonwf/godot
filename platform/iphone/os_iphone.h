@@ -106,9 +106,10 @@ private:
 
 	Vector3 last_accel;
 
-	Ref<InputEvent> event_queue[MAX_EVENTS];
+	/* Ref<InputEvent> event_queue[MAX_EVENTS];
 	int event_count;
-	void queue_event(const Ref<InputEvent> &p_event);
+	void queue_event(const Ref<InputEvent> &p_event); */
+	void perform_event(const Ref<InputEvent> &p_event);
 
 	String data_dir;
 	String unique_id;

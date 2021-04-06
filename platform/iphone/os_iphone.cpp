@@ -209,13 +209,13 @@ bool OSIPhone::iterate() {
 	if (!main_loop)
 		return true;
 
-	if (main_loop) {
+	/* if (main_loop) {
 		for (int i = 0; i < event_count; i++) {
 
 			input->parse_input_event(event_queue[i]);
 		};
 	};
-	event_count = 0;
+	event_count = 0; */
 
 	return Main::iteration();
 };
@@ -228,7 +228,9 @@ void OSIPhone::key(uint32_t p_key, bool p_pressed) {
 	ev->set_pressed(p_pressed);
 	ev->set_scancode(p_key);
 	ev->set_unicode(p_key);
-	queue_event(ev);
+  
+  print_line("queue_event:key: " + itos(p_key) + " " + itos((int)p_pressed));
+	perform_event(ev);
 };
 
 void OSIPhone::touch_press(int p_idx, int p_x, int p_y, bool p_pressed, bool p_doubleclick) {
@@ -240,7 +242,8 @@ void OSIPhone::touch_press(int p_idx, int p_x, int p_y, bool p_pressed, bool p_d
 		ev->set_index(p_idx);
 		ev->set_pressed(p_pressed);
 		ev->set_position(Vector2(p_x, p_y));
-		queue_event(ev);
+    //NSLog(@"touch_press %d %d %d %d %d", (int)p_idx, (int)p_x, (int)p_y, (int)p_pressed, (int)p_doubleclick);
+		perform_event(ev);
 	};
 
 	touch_list.pressed[p_idx] = p_pressed;
@@ -255,16 +258,23 @@ void OSIPhone::touch_drag(int p_idx, int p_prev_x, int p_prev_y, int p_x, int p_
 		ev->set_index(p_idx);
 		ev->set_position(Vector2(p_x, p_y));
 		ev->set_relative(Vector2(p_x - p_prev_x, p_y - p_prev_y));
-		queue_event(ev);
+    // NSLog(@"touch_drag %d %d %d %d %d", (int)p_idx, (int)p_prev_x, (int)p_prev_y, (int)p_x, (int)p_y);
+		perform_event(ev);
 	};
 };
 
-void OSIPhone::queue_event(const Ref<InputEvent> &p_event) {
+void OSIPhone::perform_event(const Ref<InputEvent> &p_event) {
+	input->parse_input_event(p_event);
+}
+
+/* void OSIPhone::queue_event(const Ref<InputEvent> &p_event) {
 
 	ERR_FAIL_INDEX(event_count, MAX_EVENTS);
 
+  print_line("event_count : " + itos(event_count));
+  //NSLog(@"event_count : %d", event_count);
 	event_queue[event_count++] = p_event;
-};
+}; */
 
 void OSIPhone::touches_cancelled() {
 
@@ -382,10 +392,10 @@ void OSIPhone::finalize() {
 	//	memdelete(rasterizer);
 
 	// Free unhandled events before close
-	for (int i = 0; i < MAX_EVENTS; i++) {
+	/* for (int i = 0; i < MAX_EVENTS; i++) {
 		event_queue[i].unref();
 	};
-	event_count = 0;
+	event_count = 0; */
 };
 
 void OSIPhone::set_mouse_show(bool p_show){};
@@ -691,7 +701,7 @@ OSIPhone::OSIPhone(int width, int height, String p_data_dir) {
 	vm.height = height;
 	vm.resizable = false;
 	set_video_mode(vm);
-	event_count = 0;
+	// event_count = 0;
 	virtual_keyboard_height = 0;
 
 	// can't call set_data_dir from here, since it requires DirAccess

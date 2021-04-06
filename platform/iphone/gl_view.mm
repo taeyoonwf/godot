@@ -64,7 +64,7 @@ static bool video_found_error = false;
 static bool video_playing = false;
 static CMTime video_current_time;
 
-void _show_keyboard(String);
+void _show_keyboard(String, bool, int, int);
 void _hide_keyboard();
 bool _play_video(String, float, String, String);
 bool _is_video_playing();
