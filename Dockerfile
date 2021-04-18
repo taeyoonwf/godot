@@ -58,9 +58,14 @@ RUN python3 android.py configure --target=armeabi-v7a --target=arm64-v8a && \
 
 # build with the godot code from here
 WORKDIR /root
+RUN git clone https://github.com/Poing-Studios/Godot-AdMob-Android-iOS.git
+RUN wget https://github.com/Poing-Studios/Godot-AdMob-Android-iOS/releases/download/iOS_v3.0%2B/googlemobileadssdkios.zip --quiet && unzip -qq googlemobileadssdkios.zip
 RUN git clone https://github.com/taeyoonwf/godot
+
 WORKDIR /root/godot
 RUN git checkout main
+RUN cp -r /root/Godot-AdMob-Android-iOS/ios/admob modules/
+RUN cp -r /root/GoogleMobileAdsSdkiOS-7.69.0/* modules/admob/lib/
 
 RUN scons p=x11 tools=yes module_mono_enabled=yes mono_glue=no -j8 mono_prefix=/root/mono-installs/desktop-linux-x86_64-release
 RUN ./bin/godot.x11.tools.64.mono --generate-mono-glue modules/mono/glue
