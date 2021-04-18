@@ -13,13 +13,18 @@ scons p=android target=release android_arch=armv7 module_mono_enabled=yes -j8 mo
 cd /root/godot/platform/android/java
 ./gradlew generateGodotTemplates && rm -rf /root/android-toolchains
 
-cd /root/Godot-Android-Admob-Plugin/admob-plugin
-cp /root/godot/bin/godot-lib.debug.aar /root/Godot-Android-Admob-Plugin/admob-plugin/godot-lib.release/godot-lib.release.aar
-chmod +x gradlew && ./gradlew build
+cd /root/Godot-AdMob-Android-iOS/android/admob/
+#cd /root/Godot-Android-Admob-Plugin/admob-plugin
+cp /root/godot/bin/godot-lib.debug.aar /root/Godot-AdMob-Android-iOS/android/admob/godot-lib/godot-lib.aar
+#cp /root/godot/bin/godot-lib.debug.aar /root/Godot-Android-Admob-Plugin/admob-plugin/godot-lib.release/godot-lib.release.aar
+./gradlew build
+#chmod +x gradlew && ./gradlew build
 mkdir -p /root/build/admob/android/plugins
-cp -r /root/Godot-Android-Admob-Plugin/admob-lib /root/build/admob/
-cp godotadmob/build/outputs/aar/* /root/build/admob/android/plugins/
-cp ../config/GodotAdMob.gdap /root/build/admob/android/plugins/
+cp -r /root/Godot-AdMob-Android-iOS/admob_api /root/build/admob/
+#cp -r /root/Godot-Android-Admob-Plugin/admob-lib /root/build/admob/
+cp admob/build/outputs/aar/* /root/build/admob/android/plugins/
+#cp godotadmob/build/outputs/aar/* /root/build/admob/android/plugins/
+#cp ../config/GodotAdMob.gdap /root/build/admob/android/plugins/
 
 cd /root/godot
 mkdir -p /root/build/templates/3.2.3.rc.mono
