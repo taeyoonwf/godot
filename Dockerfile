@@ -85,16 +85,12 @@ RUN ./gradlew generateGodotTemplates && \
     rm -rf /usr/lib/android-sdk/ndk/* && \
     rm -rf /root/.gradle/*
 
-WORKDIR /root
-RUN git clone https://github.com/taeyoonwf/Godot-Android-Admob-Plugin.git
-WORKDIR /root/Godot-Android-Admob-Plugin/admob-plugin
-RUN cp /root/godot/bin/godot-lib.release.aar /root/Godot-Android-Admob-Plugin/admob-plugin/godot-lib.release/
-RUN chmod +x gradlew && ./gradlew build && \
-    rm -rf /root/.gradle
+WORKDIR /root/Godot-AdMob-Android-iOS/android/admob
+RUN cp /root/godot/bin/godot-lib.release.aar godot-lib/godot-lib.aar
+RUN ./gradlew build && rm -rf /root/.gradle
 RUN mkdir -p /root/build/admob/android/plugins
-RUN cp -r /root/Godot-Android-Admob-Plugin/admob-lib /root/build/admob/
-RUN cp godotadmob/build/outputs/aar/* /root/build/admob/android/plugins/
-RUN cp ../config/GodotAdMob.gdap /root/build/admob/android/plugins/
+RUN cp -r /root/Godot-AdMob-Android-iOS/admob_api /root/build/admob/
+RUN cp admob/build/outputs/aar/* /root/build/admob/android/plugins/
 
 WORKDIR /root/godot
 RUN mkdir -p /root/build/templates/3.2.3.rc.mono
