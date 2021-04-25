@@ -59,7 +59,7 @@ RUN python3 android.py configure --target=armeabi-v7a --target=arm64-v8a && \
 # build with the godot code from here
 WORKDIR /root
 RUN git clone https://github.com/taeyoonwf/Godot-AdMob-Android-iOS.git
-RUN wget https://github.com/Poing-Studios/Godot-AdMob-Android-iOS/releases/download/iOS_v3.0%2B/googlemobileadssdkios.zip --quiet && \
+RUN wget https://github.com/taeyoonwf/Godot-AdMob-Android-iOS/releases/download/v1/googlemobileadssdkios.zip --quiet && \
     unzip -qq googlemobileadssdkios.zip && \
     rm googlemobileadssdkios.zip
 RUN git clone https://github.com/taeyoonwf/godot
@@ -82,6 +82,7 @@ RUN scons p=android target=release_debug android_arch=arm64v8 module_mono_enable
 RUN scons p=android target=release_debug android_arch=armv7 module_mono_enabled=yes -j8 mono_prefix=/root/mono-installs/android-armeabi-v7a-release
 RUN scons p=android target=release android_arch=arm64v8 module_mono_enabled=yes -j8 mono_prefix=/root/mono-installs/android-arm64-v8a-release
 RUN scons p=android target=release android_arch=armv7 module_mono_enabled=yes -j8 mono_prefix=/root/mono-installs/android-armeabi-v7a-release
+
 WORKDIR /root/godot/platform/android/java
 RUN ./gradlew generateGodotTemplates && \
     rm -rf /usr/lib/android-sdk/ndk/* && \
