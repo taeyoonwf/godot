@@ -59,7 +59,7 @@ RUN python3 android.py configure --target=armeabi-v7a --target=arm64-v8a && \
 # build with the godot code from here
 WORKDIR /root
 RUN git clone https://github.com/taeyoonwf/Godot-AdMob-Android-iOS.git
-RUN wget https://github.com/taeyoonwf/Godot-AdMob-Android-iOS/releases/download/v1/googlemobileadssdkios.zip --quiet && \
+RUN wget https://github.com/Poing-Studios/Godot-AdMob-Android-iOS/releases/download/iOS_v3.0%2B/googlemobileadssdkios.zip --quiet && \
     unzip -qq googlemobileadssdkios.zip && \
     rm googlemobileadssdkios.zip
 RUN git clone https://github.com/taeyoonwf/godot
@@ -73,33 +73,3 @@ RUN mv /root/GoogleMobileAdsSdkiOS-7.69.0/* modules/admob/lib/
 
 RUN scons p=x11 tools=yes module_mono_enabled=yes mono_glue=no -j8 mono_prefix=/root/mono-installs/desktop-linux-x86_64-release
 RUN ./bin/godot.x11.tools.64.mono --generate-mono-glue modules/mono/glue
-RUN scons p=x11 tools=yes module_mono_enabled=yes target=release_debug -j8 mono_prefix=/root/mono-installs/desktop-linux-x86_64-release
-RUN rm ./bin/godot.x11.tools.64.mono
-RUN mkdir /root/build
-RUN cp -r bin /root/build/
-
-RUN scons p=android target=release_debug android_arch=arm64v8 module_mono_enabled=yes -j8 mono_prefix=/root/mono-installs/android-arm64-v8a-release
-RUN scons p=android target=release_debug android_arch=armv7 module_mono_enabled=yes -j8 mono_prefix=/root/mono-installs/android-armeabi-v7a-release
-RUN scons p=android target=release android_arch=arm64v8 module_mono_enabled=yes -j8 mono_prefix=/root/mono-installs/android-arm64-v8a-release
-RUN scons p=android target=release android_arch=armv7 module_mono_enabled=yes -j8 mono_prefix=/root/mono-installs/android-armeabi-v7a-release
-
-WORKDIR /root/godot/platform/android/java
-RUN ./gradlew generateGodotTemplates && \
-    rm -rf /usr/lib/android-sdk/ndk/* && \
-    rm -rf /root/.gradle/*
-
-WORKDIR /root/Godot-AdMob-Android-iOS/android/admob
-RUN cp /root/godot/bin/godot-lib.release.aar godot-lib/godot-lib.aar
-RUN ./gradlew build && rm -rf /root/.gradle
-RUN mkdir -p /root/build/admob/android/plugins
-RUN cp -r /root/Godot-AdMob-Android-iOS/admob_api /root/build/admob/
-RUN cp admob/build/outputs/aar/* /root/build/admob/android/plugins/
-
-WORKDIR /root/godot
-RUN mkdir -p /root/build/templates/3.2.3.rc.mono
-RUN cp bin/android_* /root/build/templates/3.2.3.rc.mono/
-RUN cp -r /root/mono-installs/android-bcl /root/build/templates/3.2.3.rc.mono/bcl
-RUN cp -r /root/mono-installs/desktop-bcl/* /root/build/templates/3.2.3.rc.mono/bcl/
-
-WORKDIR /root
-COPY Dockerfile ./
