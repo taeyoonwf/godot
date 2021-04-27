@@ -609,7 +609,19 @@ static void clear_touches() {
 
 		case AVAudioSessionRouteChangeReasonCategoryChange: {
 			// called at start - also when other audio wants to play
-			NSLog(@"AVAudioSessionRouteChangeReasonCategoryChange");
+			auto routeOut = [[[AVAudioSession sharedInstance] currentRoute] outputs];
+			auto routeCount = [routeOut count];
+			if (routeCount == 1) {
+				auto portDesc = [routeOut objectAtIndex:0];
+				if ([portDesc.portName isEqualToString:@"Receiver"]) {
+					if (GLOBAL_GET("audio/enable_audio_input")) {
+						[[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord mode:AVAudioSessionModeDefault options:AVAudioSessionCategoryOptionDefaultToSpeaker|AVAudioSessionCategoryOptionAllowBluetooth error:NULL];
+						[[AVAudioSession sharedInstance] setActive:true error:NULL];
+					} else {
+						[[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryAmbient error:nil];
+					}
+				}
+			}
 		}; break;
 	}
 }
